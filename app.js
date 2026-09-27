@@ -1,0 +1,354 @@
+const LOGO = "images/budapestflow-logo.png";
+const LAST_UPDATED = "September 2026";
+const REVIEW_URL = "https://www.tripadvisor.com/Attraction_Review-g274887-d8358217-Reviews-BudapestFlow-Budapest_Central_Hungary.html";
+const TOURS_URL = "https://budapestflow.com";
+const GOOGLE_REVIEW_URL = "#"; // TODO: your Google review link (Business Profile > Ask for reviews)
+// Tip buttons: one Stripe Payment Link per amount, "other" = a link where the guest types the amount.
+// TODO: paste the real Stripe links. While a value is "#", the button is shown but does nothing.
+const TIP_LINKS = [
+  { label: "€10", url: "#" },
+  { label: "€15", url: "#", featured: true },
+  { label: "€20", url: "#" },
+  { label: "Other", url: "#" }
+];
+const CARD_URL = "https://cv.perpatvar.xyz/";
+const EMAIL = "info@budapestflow.com";
+
+// Category tile label position: "center" (poster style) or "bottom" (original). Change this one word to switch back.
+const TILE_LABELS = "center";
+const INSTAGRAM_URL = "https://instagram.com/budapestflow";
+
+const TOURS = {
+  "street-art": "Street Art Tour",
+  "mini-statues": "Hidden Mini Statues Tour",
+  "highlights": "Highlights and Hidden Gems"
+};
+
+// img: path to a photo (e.g. "images/cat-baths.webp") to replace the tinted placeholder
+const CATEGORIES = [
+  { id: "food", c1: "#B5654A", c2: "#7A3B2A", img: "images/cat-food.webp", label: "Hungarian food", home: true, intro: "Where I'd take a friend for a proper Hungarian meal." },
+  { id: "quick", c1: "#D4A04A", c2: "#9A6A2A", img: "images/cat-quick.webp", label: "Quick & cheap", home: true, intro: "Good food when you just want to eat and keep walking." },
+  { id: "coffee", c1: "#8C6A52", c2: "#4E3829", img: "images/cat-coffee.webp", label: "Coffee", home: true, intro: "Grand old cafés for the atmosphere, specialty spots for the coffee." },
+  { id: "sweets", c1: "#D29A8C", c2: "#9C6258", img: "images/cat-sweets.webp", label: "Cakes & sweets", home: true, intro: "Hungarian cakes, done right." },
+  { id: "baths", c1: "#5F9A96", c2: "#2F6263", img: "", label: "Thermal baths", home: true, intro: "Each bath has its own character. Pick the one that fits your mood." },
+  { id: "danube", c1: "#5B7FA6", c2: "#2C4A6E", img: "", label: "Danube", home: true, intro: "See the city from the river, the classic way or the local way." },
+  { id: "drinks", c1: "#8A5A7A", c2: "#4E2F48", img: "", label: "Drinks & nightlife", home: true, intro: "Ruin bars, wine, craft beer and a rooftop." },
+  { id: "views", c1: "#E0A15A", c2: "#7A5F8C", img: "", label: "Views & photo spots", home: true, intro: "The best views, and when to go for them." },
+  { id: "rainy", c1: "#7D8794", c2: "#454E5C", img: "", label: "Museums & indoors", home: true, intro: "For a rainy afternoon, or when your feet need a break from walking." },
+  { id: "practical", c1: "#8C9460", c2: "#555C38", img: "", label: "Practical tips", home: true, intro: "Small things that save you money and hassle." }
+];
+
+// Sample data. near = landmark a visitor knows. fav = Attila's pick. tours = near that tour's end point.
+// price: 1–4 (€ to €€€€), 0 = free (no price shown).
+// web: the place's own link. Website, Facebook or Instagram are all fine; the button label and icon follow the link.
+//      Leave web out while you're still collecting links (a greyed-out "Website" button shows);
+//      set web: "" if the place has no link at all (the button disappears, "See on map" goes full width).
+const PLACES = [
+  { cat: "food", name: "Kispiac", why: "Small, busy bistro next to the market. Hearty classics.", price: 2, near: "Near the Parliament", good: ["Lunch", "Dinner"], tip: "Book ahead on weekends.", order: "Pork dishes, pickles", fav: true, tours: ["highlights"] },
+  { cat: "food", name: "Café Kör", why: "Reliable Hungarian dishes near the Basilica.", price: 2, near: "Near St. Stephen's Basilica", good: ["Lunch", "Dinner"], tip: "Daily specials on the board.", order: "Goulash", tours: ["highlights"] },
+  { cat: "food", name: "Rosenstein", why: "Family-run, a local favourite for decades.", price: 3, near: "Near Keleti railway station", good: ["Dinner"], tip: "Worth the short trip out.", order: "Ask the owner" },
+  { cat: "food", name: "Kéhli Vendéglő", why: "Old-school Óbuda tavern with live music.", price: 2, near: "Óbuda, north along the river", good: ["Dinner", "Groups"], tip: "Combine with a walk in Óbuda.", order: "Bone marrow on toast" },
+
+  { cat: "quick", name: "Lángos stand", why: "Fried dough with sour cream and cheese. Eat it hot.", price: 1, near: "Several spots around the centre", good: ["Quick bite", "Budget"], tip: "Cash is handy.", order: "Classic lángos", tours: ["street-art"] },
+  { cat: "quick", name: "Bors GasztroBár", why: "Creative soups and baguettes, tiny place.", price: 1, near: "Jewish Quarter", good: ["Quick bite", "Budget"], tip: "Expect a queue, it moves fast.", order: "Soup of the day", fav: true, tours: ["street-art", "mini-statues"] },
+  { cat: "quick", name: "Central Market Hall, upper floor", why: "Food stalls above the market.", price: 1, near: "Central Market Hall", good: ["Lunch", "Budget"], tip: "Closed Sundays.", order: "Stuffed cabbage" },
+  { cat: "quick", name: "Hold utca market", why: "Market hall with good lunch counters.", price: 1, near: "Near the Parliament", good: ["Lunch", "Budget"], best: "Weekday lunch", tip: "Weekday lunch is best.", order: "Daily menu", tours: ["mini-statues", "highlights"] },
+
+  { cat: "coffee", group: "Historic grand cafés", name: "New York Kávéház", why: "The most beautiful café in town. Come to look.", price: 4, near: "On the Grand Boulevard", good: ["Sightseeing"], best: "Early morning", tip: "Go early to skip the queue.", order: "A coffee, not a meal" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Central Kávéház", why: "Classic literary café, calmer than New York.", price: 3, near: "Near Elizabeth Bridge", good: ["Breakfast", "Cake break"], order: "Cake and coffee" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Gerbeaud", why: "The famous one on Vörösmarty tér.", price: 3, near: "Vörösmarty Square", good: ["Cake break"], best: "Afternoon", order: "Dobos cake", tours: ["highlights"] },
+  { cat: "coffee", group: "Historic grand cafés", name: "Művész", why: "Old café opposite the Opera.", price: 2, near: "Opposite the Opera House", good: ["Cake break"] },
+  { cat: "coffee", group: "Historic grand cafés", name: "Ruszwurm", why: "Tiny, very old café in the Castle District.", price: 2, near: "Castle District", good: ["Cake break"], best: "Weekday morning", tip: "Few tables, be patient." },
+  { cat: "coffee", group: "Specialty coffee", name: "Espresso Embassy", why: "Serious coffee near the Basilica.", price: 2, near: "Near St. Stephen's Basilica", good: ["Coffee lovers"], fav: true, tours: ["mini-statues"] },
+  { cat: "coffee", group: "Specialty coffee", name: "My Little Melbourne", why: "Small specialty bar in the Jewish Quarter.", price: 2, near: "Jewish Quarter", good: ["Coffee lovers"], tours: ["street-art"] },
+  { cat: "coffee", group: "Specialty coffee", name: "Fekete", why: "Hidden courtyard café.", price: 2, near: "Near the National Museum", good: ["Breakfast", "Coffee lovers"] },
+
+  { cat: "baths", name: "Széchenyi", why: "The big yellow classic. Best for first-timers.", price: 3, near: "City Park", good: ["First-timers", "Groups"], best: "Early morning", tip: "Bring flip-flops and a towel.", fav: true },
+  { cat: "baths", name: "Rudas", why: "Turkish dome and a rooftop pool with a view.", price: 3, near: "Foot of Gellért Hill, Buda", good: ["Views"], best: "Evening", tip: "Check men-only and women-only days." },
+  { cat: "baths", name: "Lukács", why: "Where locals go. Less show, more bathing.", price: 2, near: "Buda end of Margaret Bridge", good: ["Quiet time"], best: "Weekday morning" },
+  { cat: "baths", name: "Veli Bej", why: "Small, quiet, beautiful Ottoman bath.", price: 2, near: "Buda end of Margaret Bridge", good: ["Quiet time", "Couples"], best: "Weekday afternoon", tip: "Limited capacity." },
+
+  { cat: "danube", name: "Evening river cruise", why: "The Parliament lit up from the water.", price: 3, near: "Pest riverbank", good: ["Couples", "Photos"], best: "Sunset", tip: "Sunset departures sell out.", fav: true },
+  { cat: "danube", name: "Public boat D11 / D12", why: "The local hack: similar views for a fraction of the price.", price: 1, near: "Stops along both riverbanks", good: ["Budget", "Photos"], best: "Late afternoon", tip: "Check the timetable, it changes by season." },
+
+  { cat: "drinks", name: "Szimpla Kert", why: "The original ruin bar. See it once.", price: 1, near: "Jewish Quarter", good: ["First-timers", "Groups"], best: "Evening", tip: "Sunday morning farmers' market.", tours: ["street-art"] },
+  { cat: "drinks", name: "DiVino", why: "Hungarian wines by the glass near the Basilica.", price: 2, near: "St. Stephen's Basilica square", good: ["Wine lovers", "Couples"], best: "Evening", fav: true },
+  { cat: "drinks", name: "Doblo", why: "Cosy wine bar in the Jewish Quarter.", price: 2, near: "Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening" },
+  { cat: "drinks", name: "Élesztő", why: "Craft beer in a former glassworks.", price: 1, near: "Near Corvin Quarter", good: ["Beer lovers", "Groups"], best: "Evening" },
+  { cat: "drinks", name: "360 Bar", why: "Rooftop on Andrássy út.", price: 3, near: "On Andrássy Avenue", good: ["Couples"], best: "Sunset", tip: "Weather dependent." },
+
+  { cat: "views", name: "Fisherman's Bastion", why: "The postcard view over the Parliament.", price: 0, web: "", near: "Castle District", good: ["Photos"], best: "Early morning", tip: "Go early morning, before the crowds." },
+  { cat: "views", name: "Citadella and Gellért Hill", why: "The whole city below you.", price: 0, web: "", near: "Top of Gellért Hill", good: ["Photos", "Couples"], best: "Sunset", tip: "Go for sunset.", fav: true },
+  { cat: "views", name: "Elizabeth Lookout", why: "Highest point in the city, a proper outing.", price: 0, web: "", near: "Buda Hills, highest point", good: ["Nature", "Half-day trip"], best: "Clear day", tip: "Take the chairlift one way." },
+  { cat: "views", name: "Liberty Bridge", why: "Locals sit on the bridge on summer evenings.", price: 0, web: "", near: "Next to Central Market Hall", good: ["Photos"], best: "Summer evening", tip: "Go for sunset." },
+
+  { cat: "sweets", name: "Szamos", why: "Marzipan and classic cakes.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth", "Gifts"], fav: true },
+  { cat: "sweets", name: "Auguszt", why: "Family patisserie since the 19th century.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth"] },
+  { cat: "sweets", name: "Daubner", why: "Locals' cake shop in Buda.", price: 1, near: "Buda side", good: ["Sweet tooth"], tip: "Expect a queue." },
+
+  { cat: "rainy", name: "House of Terror", why: "Hard-hitting museum of 20th-century Hungary.", price: 2, near: "On Andrássy Avenue", good: ["History"], tip: "Closed Mondays." },
+  { cat: "rainy", name: "Hospital in the Rock", why: "Wartime hospital inside Castle Hill.", price: 2, near: "Castle District", good: ["History"], tip: "Guided visits only." },
+  { cat: "rainy", name: "House of Music Hungary", why: "Interactive music museum in City Park.", price: 2, near: "City Park", good: ["Families"], fav: true },
+  { cat: "rainy", name: "Central Market Hall", why: "Browse, taste, buy paprika.", price: 1, near: "Pest end of Liberty Bridge", good: ["Gifts", "Families"], best: "Weekday morning", tip: "Closed Sundays." }
+];
+
+const TIPS = [
+  { title: "Taxi", text: "Use Főtaxi or the Bolt app. Don't take a taxi that waves you over." },
+  { title: "Public transport", text: "Buy a 24h or 72h pass if you'll ride more than a few times." },
+  { title: "Tipping", text: "Around 10–15% in restaurants. Check the bill: service is sometimes included." },
+  { title: "Pharmacy", text: "Look for the green cross and the word 'Gyógyszertár'." },
+  { title: "Euronet ATMs", avoid: true, text: "Use ATMs inside bank branches instead." },
+  { title: "Tourist exchange booths", avoid: true, text: "Pay by card, or withdraw forints from a bank ATM." },
+  { title: "Eating on Váci utca", avoid: true, text: "Walk one street away for better food at better prices." }
+];
+
+const app = document.getElementById("app");
+const params = new URLSearchParams(location.search);
+const tourKey = TOURS[params.get("tour")] ? params.get("tour") : null;
+const filters = { cheap: false, fav: false };
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ico = (id, cls = "icon") => `<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const priceHtml = n => `<span aria-label="Price level ${n} of 4">${"€".repeat(n)}<b aria-hidden="true">${"€".repeat(4 - n)}</b></span>`;
+const mapsUrl = p => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " Budapest");
+const tileStyle = c => c.img ? `--img:url(${c.img})` : `--c1:${c.c1};--c2:${c.c2}`;
+const catById = id => CATEGORIES.find(c => c.id === id);
+
+function reviewBlock() {
+  return `<section class="review" aria-labelledby="review-title">
+    <h2 id="review-title">Enjoyed the walk?</h2>
+    <p>A few words about the tour help other travellers find small, local tours like mine. Choose whichever site you use.</p>
+    <div class="btn-row">
+      <a class="btn btn-secondary" href="${REVIEW_URL}" target="_blank" rel="noopener"><span class="ta-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="rv-label">Tripadvisor</span></a>
+      <a class="btn btn-secondary" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener"><span class="g-stars" aria-hidden="true">★★★★★</span><span class="rv-label">Google</span></a>
+    </div>
+  </section>`;
+}
+
+// Second button on a place card: label + icon follow the link (own site, Facebook or Instagram).
+function linkBtn(p) {
+  if (p.web === undefined) return `<a class="btn btn-secondary" href="#" onclick="return false" aria-disabled="true">${ico("link")}Website</a>`;
+  if (!p.web) return "";
+  const host = (() => { try { return new URL(p.web).hostname.replace(/^www\.|^m\./, ""); } catch (e) { return ""; } })();
+  const kind = /(^|\.)(facebook\.com|fb\.com)$/.test(host) ? ["facebook", "Facebook"]
+             : /(^|\.)instagram\.com$/.test(host) ? ["instagram", "Instagram"]
+             : ["link", "Website"];
+  return `<a class="btn btn-secondary" href="${esc(p.web)}" target="_blank" rel="noopener">${ico(kind[0])}${kind[1]}</a>`;
+}
+
+function card(p) {
+  return `<article class="card">
+    <div class="head">
+      <h3 class="name">${esc(p.name)}${p.fav ? '<span class="pick">Attila\'s pick</span>' : ""}</h3>
+      ${p.price ? `<div class="price">${priceHtml(p.price)}</div>` : ""}
+      <p class="why">${esc(p.why)}</p>
+      <div class="meta">
+        <span class="near-to">${ico("pin")}${esc(p.near)}</span>
+      </div>
+      <div class="tags">
+        ${(p.good || []).map(g => `<span class="tag"><span class="sr">Good for </span>${esc(g)}</span>`).join("")}
+        ${p.best ? `<span class="tag best">${ico("clock")}Best: ${esc(p.best)}</span>` : ""}
+      </div>
+    </div>
+    <div class="body">
+      ${(p.order || p.tip) ? `<ul class="facts">
+        ${p.order ? `<li>${ico("check")}<span><strong>Order:</strong> ${esc(p.order)}</span></li>` : ""}
+        ${p.tip ? `<li>${ico("check")}<span><strong>Tip:</strong> ${esc(p.tip)}</span></li>` : ""}
+      </ul>` : ""}
+      <div class="btn-row">
+        <a class="btn btn-primary" href="${mapsUrl(p)}" target="_blank" rel="noopener">${ico("pin")}See on map</a>
+        ${linkBtn(p)}
+      </div>
+    </div>
+  </article>`;
+}
+
+function siteFooter() {
+  return `<footer class="pad">
+    <a href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours"></a>
+    <p class="tagline">Small-group walking tours in Budapest, the way locals see it.</p>
+    <nav aria-label="BudapestFlow">
+      <a href="${TOURS_URL}" target="_blank" rel="noopener">budapestflow.com</a>
+      <a href="${INSTAGRAM_URL}" target="_blank" rel="noopener">Instagram</a>
+      <a href="${REVIEW_URL}" target="_blank" rel="noopener">Tripadvisor</a>
+    </nav>
+    <small>© ${new Date().getFullYear()} BudapestFlow Walking Tours · Tips updated ${esc(LAST_UPDATED)}</small>
+  </footer>`;
+}
+
+function renderHome() {
+  const homeCats = CATEGORIES.filter(c => c.home);
+  const nearTour = tourKey ? PLACES.filter(p => (p.tours || []).includes(tourKey)) : [];
+
+  app.innerHTML = `
+    <div class="brandbar pad">
+      <a class="logo" href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours"></a>
+      <button class="back" id="share" aria-label="Share this page with a friend">${ico("share")}</button>
+    </div>
+
+    <main class="pad">
+      <header class="hero">
+        <div class="portrait"><img src="images/attila.webp" alt="Attila Höfle, your guide" width="104" height="104"></div>
+        <h1>Thanks for walking with me</h1>
+        <div class="hero-text">
+          <p class="lead">Here's where I'd go in Budapest.</p>
+          <div class="sig"><span class="hand">– Attila</span></div>
+        </div>
+      </header>
+
+      ${tourKey ? `<section class="near" aria-labelledby="near-title">
+        <p class="eyebrow">Close to where we finished</p>
+        <h2 id="near-title">${esc(TOURS[tourKey])}</h2>
+        ${nearTour.map(card).join("")}
+      </section>` : ""}
+
+      <nav aria-labelledby="cat-title">
+        <div class="section-head"><h2 id="cat-title">What are you looking for?</h2></div>
+        <div class="grid${TILE_LABELS === "center" ? " labels-center" : ""}">
+          ${homeCats.map(c => `<button class="tile" data-cat="${c.id}" style="${tileStyle(c)}">
+            <span class="tile-img" aria-hidden="true">${c.img ? "" : ico(c.id)}</span>
+            ${c.img ? "" : '<span class="tile-ph" aria-hidden="true">Photo</span>'}
+            <span class="tile-label">${esc(c.label)}</span>
+          </button>`).join("")}
+        </div>
+      </nav>
+
+      <div class="tools">
+        <a class="btn btn-secondary" href="#" onclick="return false">${ico("map")}See all on map</a>
+      </div>
+
+      ${reviewBlock()}
+
+      <section class="panel" aria-labelledby="more-tours">
+        <h2 id="more-tours">Staying a few more days?</h2>
+        <p>Join another walk with me. Small groups, the city the way locals see it.</p>
+        <a class="btn btn-primary" href="${TOURS_URL}" target="_blank" rel="noopener">See my tours</a>
+      </section>
+
+      <a class="contact" href="${CARD_URL}">
+        <span class="contact-ico">${ico("contact")}</span>
+        <span class="grow"><strong>Save my contact</strong><span>Phone, WhatsApp and email in one tap</span></span>
+        ${ico("chev")}
+      </a>
+
+      <section class="tipping" aria-labelledby="tip-title">
+        <h2 id="tip-title">Want to say thanks?</h2>
+        <p>Tipping your guide is never expected, always appreciated. It goes straight to me.</p>
+        <div class="tip-amounts" role="group" aria-label="Choose a tip amount">
+          ${TIP_LINKS.map(t => `<a class="btn ${t.featured ? "btn-primary" : "btn-secondary"}" href="${t.url}"${t.url === "#" ? ' onclick="return false" aria-disabled="true"' : ' target="_blank" rel="noopener"'}>${esc(t.label)}</a>`).join("")}
+        </div>
+        <p class="tip-note">Card, Apple Pay or Google Pay. Secure payment via Stripe.</p>
+      </section>
+
+      <section class="ask" aria-labelledby="ask-title">
+        <h2 id="ask-title">Any questions left?</h2>
+        <p>Not sure where to eat tonight, or how to get somewhere? Drop me an email and I'll get back to you.</p>
+        <a class="btn btn-secondary" href="mailto:${EMAIL}?subject=${encodeURIComponent("Question after the tour")}">${ico("mail")}Email me</a>
+        <p class="ask-addr">${esc(EMAIL)}</p>
+      </section>
+    </main>
+    ${siteFooter()}
+  `;
+  document.getElementById("share").addEventListener("click", () => sharePage());
+}
+
+function renderCategory(id) {
+  const c = catById(id);
+  if (!c) { location.hash = ""; return; }
+
+  let body;
+  if (id === "practical") {
+    body = TIPS.map(t => `<div class="tipcard${t.avoid ? " avoid" : ""}">
+      ${t.avoid ? '<span class="tag-avoid">Avoid</span>' : ""}
+      <h2>${esc(t.title)}</h2><p>${esc(t.text)}</p></div>`).join("");
+  } else {
+    let list = PLACES.filter(p => p.cat === id);
+    if (filters.cheap && list.some(p => p.price)) list = list.filter(p => p.price <= 2);
+    if (filters.fav) list = list.filter(p => p.fav);
+    const groups = [...new Set(list.map(p => p.group || ""))];
+    body = list.length
+      ? groups.map(g => (g ? `<p class="eyebrow group-title">${esc(g)}</p>` : "") + list.filter(p => (p.group || "") === g).map(card).join("")).join("")
+      : `<p class="empty">Nothing matches these filters right now. <button id="clear">Show all picks</button></p>`;
+  }
+
+  app.innerHTML = `
+    <div class="topbar pad">
+      <button class="back" id="back" aria-label="Back to all categories">${ico("back")}</button>
+      <h1>${esc(c.label)}</h1>
+      <button class="back" id="share-cat" aria-label="Share this list with a friend">${ico("share")}</button>
+      <img src="${LOGO}" alt="BudapestFlow">
+    </div>
+    <main class="pad">
+      <p class="intro">${esc(c.intro)}</p>
+      ${id === "practical" ? "" : `<div class="filters" role="group" aria-label="Filters">
+        ${PLACES.some(p => p.cat === id && p.price) ? `<button class="chip" data-f="cheap" aria-pressed="${filters.cheap}">€€ or less</button>` : ""}
+        <button class="chip" data-f="fav" aria-pressed="${filters.fav}">Attila's picks</button>
+      </div>`}
+      ${body}
+    </main>
+    ${siteFooter()}
+  `;
+  document.getElementById("back").addEventListener("click", () => { location.hash = ""; });
+  document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
+  const clear = document.getElementById("clear");
+  if (clear) clear.addEventListener("click", () => { filters.cheap = filters.fav = false; renderCategory(id); });
+  app.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    filters[b.dataset.f] = !filters[b.dataset.f];
+    renderCategory(id);
+  }));
+}
+
+// Link to share: without the guest's ?tour= (a friend wasn't on that tour), and pointing to the category if one is open.
+function shareUrl(cat) {
+  const u = new URL(location.href);
+  u.searchParams.delete("tour");
+  u.hash = cat ? "cat/" + cat.id : "";
+  return u.href.replace(/#$/, "");
+}
+
+function sharePage(cat) {
+  const url = shareUrl(cat);
+  const title = cat ? `${cat.label} – Attila's Budapest tips` : "Attila's Budapest tips";
+  if (navigator.share) {
+    navigator.share({ title, url }).catch(err => {
+      if (err && err.name !== "AbortError") copyLink(url); // share sheet unavailable here → copy instead
+    });
+  } else copyLink(url);
+}
+
+// Fallback when there is no share sheet (mostly desktop): copy the link and confirm it.
+function copyLink(url) {
+  const done = ok => showToast(ok ? "Link copied" : "Copy this link: " + url);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url).then(() => done(true), () => done(legacyCopy(url)));
+  } else done(legacyCopy(url));
+}
+function legacyCopy(text) {
+  const t = document.createElement("textarea");
+  t.value = text; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+  document.body.appendChild(t); t.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  t.remove();
+  return ok;
+}
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), msg.length > 20 ? 6000 : 2200);
+}
+
+function route() {
+  const m = location.hash.match(/^#cat\/([\w-]+)/);
+  if (m) renderCategory(m[1]); else renderHome();
+  window.scrollTo(0, 0);
+}
+
+app.addEventListener("click", e => {
+  const b = e.target.closest("[data-cat]");
+  if (b) location.hash = "cat/" + b.dataset.cat;
+});
+window.addEventListener("hashchange", route);
+route();

@@ -26,14 +26,12 @@ const TOURS = {
 
 // img: path to a photo (e.g. "images/cat-baths.webp") to replace the tinted placeholder
 const CATEGORIES = [
-  { id: "food", c1: "#B5654A", c2: "#7A3B2A", img: "images/cat-food.webp", label: "Hungarian food", home: true, intro: "Where I'd take a friend for a proper Hungarian meal." },
-  { id: "quick", c1: "#D4A04A", c2: "#9A6A2A", img: "images/cat-quick.webp", label: "Quick & cheap", home: true, intro: "Good food when you just want to eat and keep walking." },
+  { id: "food", c1: "#B5654A", c2: "#7A3B2A", img: "images/cat-food.webp", label: "Food", home: true, intro: "Proper Hungarian meals, street food for a quick bite, and cakes for after." },
+  { id: "offbeat", c1: "#9A6B4F", c2: "#5A3B2C", img: "images/cat-offbeat.webp", label: "Off the beaten path", home: true, intro: "The Budapest most visitors miss: hidden courtyards, odd little museums and places where locals hang out." },
   { id: "coffee", c1: "#8C6A52", c2: "#4E3829", img: "images/cat-coffee.webp", label: "Coffee", home: true, intro: "Grand old cafés for the atmosphere, specialty spots for the coffee." },
-  { id: "sweets", c1: "#D29A8C", c2: "#9C6258", img: "images/cat-sweets.webp", label: "Cakes & sweets", home: true, intro: "Hungarian cakes, done right." },
   { id: "baths", c1: "#5F9A96", c2: "#2F6263", img: "images/cat-baths.webp", label: "Thermal baths", home: true, intro: "Each bath has its own character. Pick the one that fits your mood." },
   { id: "danube", c1: "#5B7FA6", c2: "#2C4A6E", img: "images/cat-danube.webp", label: "Danube Cruise", home: true, intro: "See the city from the river, the classic way or the local way." },
   { id: "drinks", c1: "#8A5A7A", c2: "#4E2F48", img: "images/cat-drinks.webp", label: "Drinks & nightlife", home: true, intro: "Ruin bars, wine, craft beer and a rooftop." },
-  { id: "views", c1: "#E0A15A", c2: "#7A5F8C", img: "images/cat-views.webp", label: "Views & photo spots", home: true, intro: "The best views, and when to go for them." },
   { id: "rainy", c1: "#7D8794", c2: "#454E5C", img: "images/cat-rainy.webp", label: "Museums & indoors", home: true, intro: "For a rainy afternoon, or when your feet need a break from walking." },
   { id: "practical", c1: "#8C9460", c2: "#555C38", img: "images/cat-practical.webp", label: "Practical tips", home: true, intro: "Small things that save you money and hassle." }
 ];
@@ -43,25 +41,35 @@ const CATEGORIES = [
 // web: the place's own link. Website, Facebook or Instagram are all fine; the button label and icon follow the link.
 //      Leave web out while you're still collecting links (a greyed-out "Website" button shows);
 //      set web: "" if the place has no link at all (the button disappears, "See on map" goes full width).
+// placeId: Google Maps place id, so "See on map" opens the exact listing (optional; without it Maps searches by name).
 const PLACES = [
-  { cat: "food", name: "Kispiac", why: "Small, busy bistro next to the market. Hearty classics.", price: 2, near: "Near the Parliament", good: ["Lunch", "Dinner"], tip: "Book ahead on weekends.", order: "Pork dishes, pickles", fav: true, tours: ["highlights"] },
-  { cat: "food", name: "Café Kör", why: "Reliable Hungarian dishes near the Basilica.", price: 2, near: "Near St. Stephen's Basilica", good: ["Lunch", "Dinner"], tip: "Daily specials on the board.", order: "Goulash", tours: ["highlights"] },
-  { cat: "food", name: "Rosenstein", why: "Family-run, a local favourite for decades.", price: 3, near: "Near Keleti railway station", good: ["Dinner"], tip: "Worth the short trip out.", order: "Ask the owner" },
-  { cat: "food", name: "Kéhli Vendéglő", why: "Old-school Óbuda tavern with live music.", price: 2, near: "Óbuda, north along the river", good: ["Dinner", "Groups"], tip: "Combine with a walk in Óbuda.", order: "Bone marrow on toast" },
+  { cat: "food", group: "Hungarian kitchen", name: "Menza", why: "Retro-styled classic on Liszt Ferenc Square since 2003.", price: 2, near: "Liszt Ferenc Square, near Oktogon", good: ["Lunch", "Dinner"], tip: "Good-value weekday lunch menu. Terrace in summer.", order: "Garlic cream soup, lecsó", web: "https://menzaetterem.hu/en/", placeId: "ChIJ1dRim27cQUcR_kCX7BuqHTY" },
+  { cat: "food", group: "Hungarian kitchen", name: "Café Kör", why: "Reliable Hungarian dishes near the Basilica.", price: 2, near: "Near St. Stephen's Basilica", good: ["Lunch", "Dinner"], tip: "Daily specials on the board.", order: "Goulash", tours: ["highlights"] },
+  { cat: "food", group: "Hungarian kitchen", name: "Kőleves Vendéglő", why: "Jewish-Hungarian cooking in a former kosher butcher's.", price: 2, near: "Kazinczy utca, Jewish Quarter", good: ["Lunch", "Dinner", "Veggie"], tip: "Weekday lunch deal with soup and dessert. Not kosher.", order: "Matzo ball soup, sólet (cholent)", fav: true, web: "https://kolevesvendeglo.hu/en/", placeId: "ChIJOygAumncQUcRj5mDcDKq45I" },
+  { cat: "food", group: "Hungarian kitchen", name: "Gettó Gulyás", why: "Pörkölt specialists: more than ten kinds of Hungarian stew.", price: 2, near: "Near the Great Synagogue", good: ["Lunch", "Dinner"], tip: "Almost always full. Book ahead, even for lunch.", order: "Pörkölt with nokedli, somlói for dessert", fav: true, web: "https://gettogulyas.hu/en/homepage/", placeId: "ChIJZb83JGjcQUcR1M0xNU7rtsI" },
+  { cat: "food", group: "Hungarian kitchen", name: "Rosenstein", why: "Family-run, a local favourite for decades.", price: 3, near: "Near Keleti railway station", good: ["Dinner"], tip: "Worth the short trip out.", order: "Ask the owner" },
+  { cat: "food", group: "Hungarian kitchen", name: "TATI From Farm to Table", why: "Modern Hungarian cooking with produce from their own farm.", price: 3, near: "Dohány utca, Jewish Quarter", good: ["Dinner", "Date night"], tip: "Book ahead. There is a vegan tasting menu too.", order: "The seasonal tasting menu", web: "https://tatibudapest.com/", placeId: "ChIJsdS42GjdQUcR7ovm-5DHmWo" },
+  { cat: "food", group: "Street food", name: "Retro Lángos", why: "The city's favourite lángos bar, going since 2011.", price: 1, near: "Bajcsy-Zsilinszky út, near Arany János metro", good: ["Quick bite", "Budget", "Veggie"], tip: "Gluten-free and vegan versions too. Second shop near the Parliament, in Vécsey utca.", order: "Classic lángos with sour cream and cheese", web: "https://retrolangos.hu/en/", placeId: "ChIJIZUXVGvcQUcRmGhtnafDysU" },
+  { cat: "food", group: "Street food", name: "Bors GasztroBár", why: "Creative soups and baguettes, tiny place.", price: 1, near: "Jewish Quarter", good: ["Quick bite", "Budget"], tip: "Expect a queue, it moves fast.", order: "Soup of the day", fav: true, tours: ["street-art", "mini-statues"] },
+  { cat: "food", group: "Cakes & sweets", name: "Szamos", why: "Marzipan and classic cakes.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth", "Gifts"], fav: true },
+  { cat: "food", group: "Cakes & sweets", name: "Auguszt", why: "Family patisserie since the 19th century.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth"] },
+  { cat: "food", group: "Cakes & sweets", name: "Daubner", why: "Locals' cake shop in Buda.", price: 1, near: "Buda side", good: ["Sweet tooth"], tip: "Expect a queue." },
 
-  { cat: "quick", name: "Lángos stand", why: "Fried dough with sour cream and cheese. Eat it hot.", price: 1, near: "Several spots around the centre", good: ["Quick bite", "Budget"], tip: "Cash is handy.", order: "Classic lángos", tours: ["street-art"] },
-  { cat: "quick", name: "Bors GasztroBár", why: "Creative soups and baguettes, tiny place.", price: 1, near: "Jewish Quarter", good: ["Quick bite", "Budget"], tip: "Expect a queue, it moves fast.", order: "Soup of the day", fav: true, tours: ["street-art", "mini-statues"] },
-  { cat: "quick", name: "Central Market Hall, upper floor", why: "Food stalls above the market.", price: 1, near: "Central Market Hall", good: ["Lunch", "Budget"], tip: "Closed Sundays.", order: "Stuffed cabbage" },
-  { cat: "quick", name: "Hold utca market", why: "Market hall with good lunch counters.", price: 1, near: "Near the Parliament", good: ["Lunch", "Budget"], best: "Weekday lunch", tip: "Weekday lunch is best.", order: "Daily menu", tours: ["mini-statues", "highlights"] },
 
-  { cat: "coffee", group: "Historic grand cafés", name: "New York Kávéház", why: "The most beautiful café in town. Come to look.", price: 4, near: "On the Grand Boulevard", good: ["Sightseeing"], best: "Early morning", tip: "Go early to skip the queue.", order: "A coffee, not a meal" },
-  { cat: "coffee", group: "Historic grand cafés", name: "Central Kávéház", why: "Classic literary café, calmer than New York.", price: 3, near: "Near Elizabeth Bridge", good: ["Breakfast", "Cake break"], order: "Cake and coffee" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Central Café", why: "Classic literary café, calmer than New York.", price: 3, near: "Near Elizabeth Bridge", good: ["Breakfast", "Cake break"], order: "Cake and coffee", web: "https://centralgrandcafe.hu/en/home/", placeId: "ChIJPWTeZUTcQUcRMXCSK_9QR0E" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Párisi Passage", why: "Coffee and cake under the stained-glass dome of the Párisi Udvar.", price: 3, near: "Ferenciek tere, near Elizabeth Bridge", good: ["Cake break", "Sightseeing"], tip: "Café by day, restaurant in the evening. Book for dinner.", order: "Coffee and a French-style dessert", web: "https://parisipassage.hu/", placeId: "ChIJwxcVFcTdQUcRbgQjKuCiuiI" },
   { cat: "coffee", group: "Historic grand cafés", name: "Gerbeaud", why: "The famous one on Vörösmarty tér.", price: 3, near: "Vörösmarty Square", good: ["Cake break"], best: "Afternoon", order: "Dobos cake", tours: ["highlights"] },
   { cat: "coffee", group: "Historic grand cafés", name: "Művész", why: "Old café opposite the Opera.", price: 2, near: "Opposite the Opera House", good: ["Cake break"] },
-  { cat: "coffee", group: "Historic grand cafés", name: "Ruszwurm", why: "Tiny, very old café in the Castle District.", price: 2, near: "Castle District", good: ["Cake break"], best: "Weekday morning", tip: "Few tables, be patient." },
-  { cat: "coffee", group: "Specialty coffee", name: "Espresso Embassy", why: "Serious coffee near the Basilica.", price: 2, near: "Near St. Stephen's Basilica", good: ["Coffee lovers"], fav: true, tours: ["mini-statues"] },
+  { cat: "coffee", group: "Specialty coffee", name: "Massolit Books & Café", why: "English-language bookshop and café with a hidden back garden.", price: 2, near: "Nagy Diófa utca, Jewish Quarter", good: ["Coffee lovers", "Quiet"], tip: "Take a table in the garden in summer. Busy with students at peak hours.", order: "Homemade cake and a coffee", fav: true, placeId: "ChIJb-V2Q2jcQUcRLRX9PFUgj7w" },
+  { cat: "coffee", group: "Specialty coffee", name: "Espresso Embassy", why: "Serious coffee near the Basilica.", price: 2, near: "Near St. Stephen's Basilica", good: ["Coffee lovers"], tours: ["mini-statues"], web: "https://espressoembassy.hu/", placeId: "ChIJGyzE_xTcQUcRlvjbtChDLtU" },
   { cat: "coffee", group: "Specialty coffee", name: "My Little Melbourne", why: "Small specialty bar in the Jewish Quarter.", price: 2, near: "Jewish Quarter", good: ["Coffee lovers"], tours: ["street-art"] },
-  { cat: "coffee", group: "Specialty coffee", name: "Fekete", why: "Hidden courtyard café.", price: 2, near: "Near the National Museum", good: ["Breakfast", "Coffee lovers"] },
+  { cat: "coffee", group: "Specialty coffee", name: "Fekete", why: "Hidden courtyard café, one of the city's specialty pioneers.", price: 2, near: "Near the National Museum", good: ["Breakfast", "Coffee lovers"], tip: "Enter through the courtyard. Brunch is served until early afternoon.", web: "https://feketekv.hu/", placeId: "ChIJ-UU5E0PcQUcRP0iqvvmBTO8" },
+  { cat: "offbeat", name: "Paloma Artspace", why: "Local designers' workshops around a hidden colonnaded courtyard.", price: 0, near: "Kossuth Lajos utca, near Astoria", good: ["Shopping", "Souvenirs"], tip: "The best place for handmade gifts. Peek into the Unger House courtyard nearby too.", web: "https://www.palomaartspace.com/", placeId: "ChIJe9fZIvfdQUcREuq3JWU730E" },
+  { cat: "offbeat", name: "Koller Gallery", why: "Secret gallery in the Castle District with a garden over the Danube.", price: 0, near: "Táncsics Mihály utca, Castle District", good: ["Art", "Quiet"], tip: "Free to look around. All the pieces are for sale.", web: "https://www.kollergaleria.hu/", placeId: "ChIJBzFbyhjcQUcRhPRIyE8cQt8" },
+  { cat: "offbeat", name: "Pinball Museum", why: "Europe's biggest pinball collection, and you can play almost all of it.", price: 2, near: "Radnóti Miklós utca, District XIII", good: ["Rainy day", "Evening"], tip: "One ticket, unlimited games. Open from the afternoon, closed Mon–Tue.", web: "https://flippermuzeum.hu/en/", placeId: "ChIJRRMeY47cQUcRjgnfTfZA7s4" },
+  { cat: "offbeat", name: "Children's Railway", why: "A forest railway in the Buda Hills, run by kids aged 10 to 14.", price: 1, near: "Buda Hills, Széchenyi-hegy", good: ["Families", "Nature"], tip: "Bring cash for tickets. Closed on Mondays.", web: "https://gyermekvasut.hu/en/", placeId: "ChIJ11SpDg_fQUcR8H-Af2VJzic" },
+  { cat: "offbeat", name: "Memento Park", why: "Open-air graveyard of the city's old communist statues.", price: 2, near: "Outskirts of Buda, District XXII", good: ["History"], tip: "It's a trip out of the centre. Their short guided tour makes all the difference.", web: "https://www.mementopark.hu/", placeId: "ChIJu0bfv2znQUcRzGPO9XqR-bc" },
+  { cat: "offbeat", name: "Nyolcésfél", why: "Artists' studios and a ruin bar in an old telephone exchange.", price: 1, near: "Német utca, District VIII", good: ["Evening", "Art"], tip: "A local artists' hangout with a cheap, laid-back bar.", web: "https://nyolcesfel.hu/", placeId: "ChIJqYGX84HdQUcRkCVzggfelto" },
 
   { cat: "baths", name: "Széchenyi", why: "The big yellow classic. Best for first-timers.", price: 3, near: "City Park", good: ["First-timers", "Groups"], best: "Early morning", tip: "Bring flip-flops and a towel.", fav: true },
   { cat: "baths", name: "Rudas", why: "Turkish dome and a rooftop pool with a view.", price: 3, near: "Foot of Gellért Hill, Buda", good: ["Views"], best: "Evening", tip: "Check men-only and women-only days." },
@@ -77,14 +85,7 @@ const PLACES = [
   { cat: "drinks", name: "Élesztő", why: "Craft beer in a former glassworks.", price: 1, near: "Near Corvin Quarter", good: ["Beer lovers", "Groups"], best: "Evening" },
   { cat: "drinks", name: "360 Bar", why: "Rooftop on Andrássy út.", price: 3, near: "On Andrássy Avenue", good: ["Couples"], best: "Sunset", tip: "Weather dependent." },
 
-  { cat: "views", name: "Fisherman's Bastion", why: "The postcard view over the Parliament.", price: 0, web: "", near: "Castle District", good: ["Photos"], best: "Early morning", tip: "Go early morning, before the crowds." },
-  { cat: "views", name: "Citadella and Gellért Hill", why: "The whole city below you.", price: 0, web: "", near: "Top of Gellért Hill", good: ["Photos", "Couples"], best: "Sunset", tip: "Go for sunset.", fav: true },
-  { cat: "views", name: "Elizabeth Lookout", why: "Highest point in the city, a proper outing.", price: 0, web: "", near: "Buda Hills, highest point", good: ["Nature", "Half-day trip"], best: "Clear day", tip: "Take the chairlift one way." },
-  { cat: "views", name: "Liberty Bridge", why: "Locals sit on the bridge on summer evenings.", price: 0, web: "", near: "Next to Central Market Hall", good: ["Photos"], best: "Summer evening", tip: "Go for sunset." },
 
-  { cat: "sweets", name: "Szamos", why: "Marzipan and classic cakes.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth", "Gifts"], fav: true },
-  { cat: "sweets", name: "Auguszt", why: "Family patisserie since the 19th century.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth"] },
-  { cat: "sweets", name: "Daubner", why: "Locals' cake shop in Buda.", price: 1, near: "Buda side", good: ["Sweet tooth"], tip: "Expect a queue." },
 
   { cat: "rainy", name: "House of Terror", why: "Hard-hitting museum of 20th-century Hungary.", price: 2, near: "On Andrássy Avenue", good: ["History"], tip: "Closed Mondays." },
   { cat: "rainy", name: "Hospital in the Rock", why: "Wartime hospital inside Castle Hill.", price: 2, near: "Castle District", good: ["History"], tip: "Guided visits only." },
@@ -110,7 +111,9 @@ const filters = { cheap: false, fav: false };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ico = (id, cls = "icon") => `<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const priceHtml = n => `<span aria-label="Price level ${n} of 4">${"€".repeat(n)}<b aria-hidden="true">${"€".repeat(4 - n)}</b></span>`;
-const mapsUrl = p => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " Budapest");
+// "See on map": with a Google place id (placeId) it opens the exact Maps listing; without it, a name search.
+const mapsUrl = p => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " Budapest")
+  + (p.placeId ? "&query_place_id=" + encodeURIComponent(p.placeId) : "");
 const tileStyle = c => c.img ? `--img:url(${c.img})` : `--c1:${c.c1};--c2:${c.c2}`;
 const catById = id => CATEGORIES.find(c => c.id === id);
 
@@ -260,7 +263,7 @@ function renderCategory(id) {
   } else {
     let list = PLACES.filter(p => p.cat === id);
     if (filters.cheap && list.some(p => p.price)) list = list.filter(p => p.price <= 2);
-    if (filters.fav) list = list.filter(p => p.fav);
+    if (filters.fav && list.some(p => p.fav)) list = list.filter(p => p.fav);
     const groups = [...new Set(list.map(p => p.group || ""))];
     body = list.length
       ? groups.map(g => (g ? `<p class="eyebrow group-title">${esc(g)}</p>` : "") + list.filter(p => (p.group || "") === g).map(card).join("")).join("")
@@ -277,7 +280,7 @@ function renderCategory(id) {
       <p class="intro">${esc(c.intro)}</p>
       ${id === "practical" ? "" : `<div class="filters" role="group" aria-label="Filters">
         ${PLACES.some(p => p.cat === id && p.price) ? `<button class="chip" data-f="cheap" aria-pressed="${filters.cheap}">€€ or less</button>` : ""}
-        <button class="chip" data-f="fav" aria-pressed="${filters.fav}">Attila's picks</button>
+        ${PLACES.some(p => p.cat === id && p.fav) ? `<button class="chip" data-f="fav" aria-pressed="${filters.fav}">Attila's picks</button>` : ""}
       </div>`}
       ${body}
     </main>

@@ -7,8 +7,8 @@ const GOOGLE_REVIEW_URL = "#"; // TODO: your Google review link (Business Profil
 // TODO: paste the real Stripe links. While a value is "#", the button is shown but does nothing.
 const TIP_LINKS = [
   { label: "€10", url: "#" },
-  { label: "€15", url: "#", featured: true },
-  { label: "€20", url: "#" },
+  { label: "€20", url: "#", featured: true },
+  { label: "€30", url: "#" },
   { label: "Other", url: "#" }
 ];
 const CARD_URL = "https://cv.perpatvar.xyz/";
@@ -30,12 +30,12 @@ const CATEGORIES = [
   { id: "quick", c1: "#D4A04A", c2: "#9A6A2A", img: "images/cat-quick.webp", label: "Quick & cheap", home: true, intro: "Good food when you just want to eat and keep walking." },
   { id: "coffee", c1: "#8C6A52", c2: "#4E3829", img: "images/cat-coffee.webp", label: "Coffee", home: true, intro: "Grand old cafés for the atmosphere, specialty spots for the coffee." },
   { id: "sweets", c1: "#D29A8C", c2: "#9C6258", img: "images/cat-sweets.webp", label: "Cakes & sweets", home: true, intro: "Hungarian cakes, done right." },
-  { id: "baths", c1: "#5F9A96", c2: "#2F6263", img: "", label: "Thermal baths", home: true, intro: "Each bath has its own character. Pick the one that fits your mood." },
-  { id: "danube", c1: "#5B7FA6", c2: "#2C4A6E", img: "", label: "Danube", home: true, intro: "See the city from the river, the classic way or the local way." },
-  { id: "drinks", c1: "#8A5A7A", c2: "#4E2F48", img: "", label: "Drinks & nightlife", home: true, intro: "Ruin bars, wine, craft beer and a rooftop." },
-  { id: "views", c1: "#E0A15A", c2: "#7A5F8C", img: "", label: "Views & photo spots", home: true, intro: "The best views, and when to go for them." },
-  { id: "rainy", c1: "#7D8794", c2: "#454E5C", img: "", label: "Museums & indoors", home: true, intro: "For a rainy afternoon, or when your feet need a break from walking." },
-  { id: "practical", c1: "#8C9460", c2: "#555C38", img: "", label: "Practical tips", home: true, intro: "Small things that save you money and hassle." }
+  { id: "baths", c1: "#5F9A96", c2: "#2F6263", img: "images/cat-baths.webp", label: "Thermal baths", home: true, intro: "Each bath has its own character. Pick the one that fits your mood." },
+  { id: "danube", c1: "#5B7FA6", c2: "#2C4A6E", img: "images/cat-danube.webp", label: "Danube Cruise", home: true, intro: "See the city from the river, the classic way or the local way." },
+  { id: "drinks", c1: "#8A5A7A", c2: "#4E2F48", img: "images/cat-drinks.webp", label: "Drinks & nightlife", home: true, intro: "Ruin bars, wine, craft beer and a rooftop." },
+  { id: "views", c1: "#E0A15A", c2: "#7A5F8C", img: "images/cat-views.webp", label: "Views & photo spots", home: true, intro: "The best views, and when to go for them." },
+  { id: "rainy", c1: "#7D8794", c2: "#454E5C", img: "images/cat-rainy.webp", label: "Museums & indoors", home: true, intro: "For a rainy afternoon, or when your feet need a break from walking." },
+  { id: "practical", c1: "#8C9460", c2: "#555C38", img: "images/cat-practical.webp", label: "Practical tips", home: true, intro: "Small things that save you money and hassle." }
 ];
 
 // Sample data. near = landmark a visitor knows. fav = Attila's pick. tours = near that tour's end point.
@@ -188,11 +188,11 @@ function renderHome() {
 
     <main class="pad">
       <header class="hero">
-        <div class="portrait"><img src="images/attila.webp" alt="Attila Höfle, your guide" width="104" height="104"></div>
+        <div class="portrait"><img src="images/attila.webp" alt="Attila Höfle, your guide" width="104" height="104" fetchpriority="high" decoding="async"></div>
         <h1>Thanks for walking with me</h1>
         <div class="hero-text">
           <p class="lead">Here's where I'd go in Budapest.</p>
-          <div class="sig"><span class="hand">– Attila</span></div>
+          <div class="sig"><svg class="hand" viewBox="87 260 2660 767" role="img" aria-label="– Attila"><path fill="currentColor" d="M173 786Q167 786 158 786Q149 785 138 781Q123 781 116 776Q108 770 104 763Q93 748 104 740Q116 733 153 729Q170 725 204 722Q237 720 276 718Q315 717 350 716Q385 715 405 715Q431 715 448 719Q464 723 475 734Q490 749 484 764Q477 780 454 776Q449 776 436 777Q423 778 408 779Q393 780 381 781Q375 781 348 782Q321 783 286 784Q250 785 218 786Q187 786 173 786ZM752 993Q734 983 732 971Q731 959 746 929Q761 899 793 836Q817 791 826 766Q836 740 838 729Q841 718 841 715Q839 706 843 700Q847 695 856 691Q861 686 876 673Q892 660 902 642Q911 621 923 599Q935 577 954 544Q973 510 1005 456Q1025 421 1052 380Q1078 338 1105 302Q1116 288 1127 280Q1138 272 1147 272Q1166 272 1186 282Q1205 293 1221 308Q1237 324 1243 339Q1248 347 1247 373Q1246 399 1243 436Q1240 473 1236 515Q1233 556 1227 612Q1221 668 1216 729Q1210 790 1207 846Q1204 903 1207 945Q1208 954 1207 962Q1206 970 1206 975Q1200 981 1182 980Q1164 980 1147 974Q1130 968 1128 959Q1125 956 1124 953Q1124 950 1125 932Q1126 914 1127 870L1132 714L1119 715Q1110 715 1086 717Q1062 719 1034 722Q1006 726 982 730Q959 733 950 736Q941 736 928 748Q916 760 905 779Q901 793 890 808Q880 824 880 829Q873 834 869 841Q865 848 865 848Q865 854 856 878Q846 901 832 930Q819 958 805 979L780 1015ZM980 656Q980 656 991 654Q1002 652 1017 650Q1032 647 1044 647Q1073 640 1090 637Q1107 634 1116 634Q1125 633 1131 636Q1135 641 1138 642Q1142 643 1142 643Q1143 641 1146 622Q1148 602 1152 573Q1156 544 1160 512Q1164 481 1166 454Q1169 426 1170 411Q1171 392 1170 376Q1169 361 1169 361Q1163 361 1146 383Q1128 405 1106 440Q1083 476 1062 517Q1052 536 1044 548Q1035 561 1030 561Q1028 563 1019 577Q1010 591 1000 608Q990 626 984 640Q977 654 980 656ZM1370 958Q1359 956 1346 946Q1334 935 1324 921Q1314 907 1311 897Q1311 895 1308 892Q1306 889 1306 889Q1302 886 1302 862Q1301 839 1304 810Q1307 781 1311 764Q1316 748 1326 720Q1336 693 1343 671L1370 613L1330 602Q1323 600 1318 594Q1314 588 1314 584Q1314 576 1323 562Q1332 548 1336 548Q1341 549 1354 549Q1368 549 1381 548Q1394 547 1397 546Q1401 544 1405 540Q1409 537 1411 530Q1416 519 1420 512Q1424 505 1431 493Q1438 480 1442 471Q1447 462 1457 446Q1462 439 1468 429Q1474 419 1483 412Q1492 404 1509 402Q1526 400 1541 413Q1549 423 1550 430Q1551 438 1542 452Q1534 469 1524 484Q1513 498 1504 515Q1488 537 1498 540Q1508 543 1554 536Q1583 531 1596 541Q1609 551 1611 568Q1614 592 1606 597Q1598 602 1560 602Q1536 606 1519 606Q1502 607 1494 607Q1481 608 1477 608Q1473 608 1465 610Q1457 612 1454 616Q1450 621 1446 629Q1442 633 1434 650Q1426 667 1414 687Q1400 729 1390 768Q1380 808 1374 846Q1370 867 1375 876Q1380 885 1401 887Q1412 888 1434 886Q1456 885 1470 881Q1481 876 1493 870Q1505 865 1515 859Q1524 854 1533 848Q1542 843 1542 843Q1547 835 1556 843Q1564 851 1568 863Q1568 875 1563 890Q1558 906 1526 924Q1481 952 1438 958Q1396 963 1370 958ZM1701 958Q1690 956 1678 946Q1665 935 1655 921Q1645 907 1642 897Q1642 895 1640 892Q1637 889 1637 889Q1633 886 1632 862Q1632 839 1635 810Q1638 781 1642 764Q1647 748 1657 720Q1667 693 1674 671L1701 613L1661 602Q1654 600 1650 594Q1645 588 1645 584Q1645 576 1654 562Q1663 548 1667 548Q1672 549 1686 549Q1699 549 1712 548Q1725 547 1728 546Q1732 544 1736 540Q1740 537 1742 530Q1747 519 1751 512Q1755 505 1762 493Q1769 480 1774 471Q1778 462 1788 446Q1793 439 1799 429Q1805 419 1814 412Q1823 404 1840 402Q1857 400 1872 413Q1880 423 1881 430Q1882 438 1873 452Q1865 469 1854 484Q1844 498 1835 515Q1819 537 1829 540Q1839 543 1885 536Q1914 531 1927 541Q1940 551 1942 568Q1945 592 1937 597Q1929 602 1891 602Q1867 606 1850 606Q1833 607 1825 607Q1812 608 1808 608Q1804 608 1796 610Q1788 612 1784 616Q1781 621 1777 629Q1773 633 1765 650Q1757 667 1745 687Q1731 729 1721 768Q1711 808 1705 846Q1701 867 1706 876Q1711 885 1732 887Q1743 888 1765 886Q1787 885 1801 881Q1812 876 1824 870Q1836 865 1846 859Q1855 854 1864 848Q1873 843 1873 843Q1878 835 1886 843Q1895 851 1899 863Q1899 875 1894 890Q1889 906 1857 924Q1812 952 1770 958Q1727 963 1701 958ZM1964 938Q1956 930 1952 916Q1949 901 1950 886Q1951 872 1955 864Q1955 856 1958 852Q1960 847 1959 843Q1958 839 1961 829Q1964 819 1967 810Q1974 794 1982 770Q1991 745 2000 720Q2008 695 2014 676Q2019 658 2020 654Q2020 642 2036 641Q2048 637 2062 648Q2075 658 2085 674Q2093 682 2091 696Q2089 710 2078 734Q2074 742 2068 760Q2063 777 2061 789Q2057 797 2052 812Q2046 826 2042 839Q2040 844 2038 856Q2036 868 2033 881Q2030 894 2025 902Q2016 943 1998 950Q1981 957 1964 938ZM2068 535Q2059 528 2054 518Q2049 507 2048 498Q2048 489 2050 488Q2059 480 2068 462Q2077 445 2082 431Q2083 428 2086 423Q2090 418 2094 417Q2106 409 2124 417Q2142 425 2152 441Q2161 460 2158 478Q2154 495 2136 517Q2121 537 2102 542Q2082 546 2068 535ZM2189 967Q2170 972 2156 958Q2142 943 2138 914Q2133 885 2141 848Q2146 836 2149 824Q2152 813 2152 806Q2154 796 2160 776Q2166 757 2173 736Q2180 715 2186 698Q2193 682 2195 678Q2199 678 2202 671Q2205 664 2205 657Q2205 649 2208 639Q2212 629 2216 625Q2216 620 2218 614Q2221 607 2221 603Q2221 599 2224 595Q2226 591 2226 587Q2233 574 2244 546Q2256 517 2270 482Q2283 447 2295 413Q2307 379 2314 356Q2322 332 2322 327Q2322 319 2328 313Q2333 307 2341 307Q2344 304 2352 302Q2361 301 2365 301Q2365 301 2369 305Q2373 309 2381 317Q2389 324 2394 333Q2400 342 2400 354Q2400 367 2397 378Q2394 390 2385 410Q2376 430 2357 470Q2349 490 2340 508Q2331 525 2331 529Q2331 533 2328 541Q2324 549 2320 561Q2316 569 2309 584Q2302 600 2294 618Q2287 635 2282 648Q2277 660 2277 662Q2277 666 2276 670Q2276 674 2272 678Q2268 678 2268 684Q2267 689 2267 689Q2267 699 2251 742Q2235 797 2222 843Q2208 889 2208 917Q2208 941 2202 952Q2197 963 2189 967ZM2344 934Q2340 926 2329 919Q2318 912 2318 908Q2318 904 2315 897Q2312 890 2308 886Q2303 880 2310 857Q2318 834 2333 801Q2348 768 2367 733Q2375 725 2383 712Q2391 699 2395 695Q2395 691 2398 688Q2401 684 2405 684L2411 671Q2412 667 2422 655Q2432 643 2447 628Q2462 614 2477 601Q2492 588 2502 582Q2523 568 2546 568Q2568 567 2584 580Q2587 583 2596 592Q2606 600 2618 610Q2630 620 2640 629L2677 662L2660 712Q2647 752 2654 782Q2660 812 2672 834Q2677 845 2688 852Q2699 860 2713 862Q2721 863 2728 868Q2735 873 2735 884Q2735 903 2728 912Q2721 921 2711 923Q2678 927 2648 913Q2619 899 2595 853Q2591 847 2584 830Q2578 814 2577 809Q2573 814 2565 824Q2557 833 2551 839Q2480 911 2429 934Q2378 956 2344 934ZM2393 860Q2398 863 2415 855Q2432 847 2457 827Q2491 798 2517 774Q2543 749 2564 719L2586 683Q2576 660 2567 652Q2558 645 2550 645Q2537 645 2516 664Q2496 683 2472 718Q2447 752 2419 799Q2407 820 2400 840Q2393 860 2393 860Z"/></svg></div>
         </div>
       </header>
 
@@ -212,10 +212,6 @@ function renderHome() {
           </button>`).join("")}
         </div>
       </nav>
-
-      <div class="tools">
-        <a class="btn btn-secondary" href="#" onclick="return false">${ico("map")}See all on map</a>
-      </div>
 
       ${reviewBlock()}
 
@@ -259,7 +255,7 @@ function renderCategory(id) {
   let body;
   if (id === "practical") {
     body = TIPS.map(t => `<div class="tipcard${t.avoid ? " avoid" : ""}">
-      ${t.avoid ? '<span class="tag-avoid">Avoid</span>' : ""}
+      ${t.avoid ? `<span class="tag-avoid">${ico("alert")}Avoid</span>` : ""}
       <h2>${esc(t.title)}</h2><p>${esc(t.text)}</p></div>`).join("");
   } else {
     let list = PLACES.filter(p => p.cat === id);
@@ -276,7 +272,6 @@ function renderCategory(id) {
       <button class="back" id="back" aria-label="Back to all categories">${ico("back")}</button>
       <h1>${esc(c.label)}</h1>
       <button class="back" id="share-cat" aria-label="Share this list with a friend">${ico("share")}</button>
-      <img src="${LOGO}" alt="BudapestFlow">
     </div>
     <main class="pad">
       <p class="intro">${esc(c.intro)}</p>

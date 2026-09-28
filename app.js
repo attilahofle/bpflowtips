@@ -80,24 +80,34 @@ const PLACES = [
   { cat: "danube", name: "Public boat D11 / D12", why: "The local hack: similar views for a fraction of the price.", price: 1, near: "Stops along both riverbanks", good: ["Budget", "Photos"], best: "Late afternoon", tip: "Check the timetable, it changes by season." },
 
   { cat: "drinks", name: "Szimpla Kert", why: "The original ruin bar. See it once.", price: 1, near: "Jewish Quarter", good: ["First-timers", "Groups"], best: "Evening", tip: "Sunday morning farmers' market.", tours: ["street-art"] },
+  { cat: "drinks", name: "Csendes Létterem", why: "Surreal junk-art bar in an old 1883 café building.", price: 2, near: "Ferenczy István utca, near Astoria", good: ["Groups", "Cocktails"], best: "Evening", tip: "Look for the old Café Fiume lettering on the window. Opens late afternoon.", placeId: "ChIJtfzFXUPcQUcR3mCDIuuQb1g" },
   { cat: "drinks", name: "DiVino", why: "Hungarian wines by the glass near the Basilica.", price: 2, near: "St. Stephen's Basilica square", good: ["Wine lovers", "Couples"], best: "Evening", fav: true },
   { cat: "drinks", name: "Doblo", why: "Cosy wine bar in the Jewish Quarter.", price: 2, near: "Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening" },
+  { cat: "drinks", name: "Kadarka Wine Bar", why: "About a hundred Hungarian wines open, all to taste by the glass.", price: 2, near: "Király utca, Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening", tip: "Book after 7 pm. Ask for small tasting pours before you pick a glass.", order: "A glass of Szekszárd kadarka", placeId: "ChIJkaD3aGncQUcRoEcntPpnrW8" },
   { cat: "drinks", name: "Élesztő", why: "Craft beer in a former glassworks.", price: 1, near: "Near Corvin Quarter", good: ["Beer lovers", "Groups"], best: "Evening" },
+  { cat: "drinks", name: "Fekete Kutya", why: "Tiny, shabby local bar with good-value beer.", price: 1, near: "Dob utca, Jewish Quarter", good: ["Beer lovers", "Late night"], best: "Late evening", tip: "Opens at 5 pm, closed on Sundays. Gets packed when there's a DJ.", placeId: "ChIJJ0WFtGncQUcRI3vuFybLNmA" },
   { cat: "drinks", name: "360 Bar", why: "Rooftop on Andrássy út.", price: 3, near: "On Andrássy Avenue", good: ["Couples"], best: "Sunset", tip: "Weather dependent." },
 
 
 
-  { cat: "rainy", name: "House of Terror", why: "Hard-hitting museum of 20th-century Hungary.", price: 2, near: "On Andrássy Avenue", good: ["History"], tip: "Closed Mondays." },
-  { cat: "rainy", name: "Hospital in the Rock", why: "Wartime hospital inside Castle Hill.", price: 2, near: "Castle District", good: ["History"], tip: "Guided visits only." },
-  { cat: "rainy", name: "House of Music Hungary", why: "Interactive music museum in City Park.", price: 2, near: "City Park", good: ["Families"], fav: true },
-  { cat: "rainy", name: "Central Market Hall", why: "Browse, taste, buy paprika.", price: 1, near: "Pest end of Liberty Bridge", good: ["Gifts", "Families"], best: "Weekday morning", tip: "Closed Sundays." }
+  { cat: "rainy", group: "Museums & sights", name: "Museum of Fine Arts", why: "Europe's old masters, plus Egyptian and classical art, in one grand building.", price: 2, near: "Heroes' Square", good: ["Art", "Rainy day"], tip: "Closed Mondays. Combine it with the Műcsarnok across the square.", web: "https://www.szepmuveszeti.hu/en/", placeId: "ChIJ-6FvO4jbQUcROeO39pe3Sxs" },
+  { cat: "rainy", group: "Museums & sights", name: "Műcsarnok", why: "Big contemporary art shows in a grand hall on Heroes' Square.", price: 2, near: "Heroes' Square", good: ["Art"], tip: "Each exhibition has its own ticket. Closed Mondays.", web: "https://mucsarnok.hu/", placeId: "ChIJd4t1FHjcQUcR6I49YlZiUg4" },
+  { cat: "rainy", group: "Museums & sights", name: "Ludwig Museum", why: "Modern and contemporary art, from Picasso to Central European artists.", price: 2, near: "Müpa, on the Danube bank in District IX", good: ["Art", "Rainy day"], tip: "Open until 8 pm, closed Mondays.", web: "https://www.ludwigmuseum.hu/en", placeId: "ChIJ5_bsZQTdQUcRd39JyGJUeRE" },
+  { cat: "rainy", group: "Museums & sights", name: "Hospital in the Rock", why: "Wartime hospital inside Castle Hill.", price: 2, near: "Castle District", good: ["History"], tip: "Guided visits only." },
+  { cat: "rainy", group: "Museums & sights", name: "House of Music Hungary", why: "Interactive music museum in City Park.", price: 2, near: "City Park", good: ["Families"], fav: true },
+  { cat: "rainy", group: "Museums & sights", name: "Central Market Hall", why: "Browse, taste, buy paprika.", price: 1, near: "Pest end of Liberty Bridge", good: ["Gifts", "Families"], best: "Weekday morning", tip: "Closed Sundays." },
+  { cat: "rainy", group: "Small galleries", name: "Inda Gallery", why: "Contemporary Hungarian and international art, chosen by in-house art historians.", price: 0, near: "Király utca, District VI", good: ["Art", "Free"], tip: "Free to visit. Open Tuesday to Friday afternoons.", web: "https://www.indagaleria.hu/", placeId: "ChIJ69lVf2ncQUcRR6CQ6P8GXCI" },
+  { cat: "rainy", group: "Small galleries", name: "Deák Erika Gallery", why: "One of the city's longest-running galleries, open since 1998.", price: 0, near: "Mozsár utca, near the Opera", good: ["Art", "Free"], tip: "Free to visit. Open Wednesday to Friday, midday to 6 pm.", web: "https://deakerikagaleria.hu/", placeId: "ChIJE-dtQ2zcQUcRNx8-dc5Mgr8" },
+  { cat: "rainy", group: "Small galleries", name: "Hungarian House of Photography", why: "Photo exhibitions in a historic photographer's studio house, the Mai Manó House.", price: 1, near: "Nagymező utca, near the Opera", good: ["Art", "Photography"], tip: "Small space, about half an hour. Closed Mondays.", web: "https://maimano.hu/", placeId: "ChIJgU5vE2zcQUcRXDGgKYfaaj8" }
 ];
 
 const TIPS = [
   { title: "Taxi", text: "Use Főtaxi or the Bolt app. Don't take a taxi that waves you over." },
   { title: "Public transport", text: "Buy a 24h or 72h pass if you'll ride more than a few times." },
+  { title: "Airport bus 100E", text: "The cheap way to the airport: a direct bus from Deák Ferenc tér (also stops at Kálvin tér). It needs its own 2,500 HUF airport ticket. Just tap your bank card on the reader as you board. With a Budapest travel pass, buy the 1,000 HUF add-on in the BudapestGO app." },
   { title: "Tipping", text: "Around 10–15% in restaurants. Check the bill: service is sometimes included." },
   { title: "Pharmacy", text: "Look for the green cross and the word 'Gyógyszertár'." },
+  { title: "Riding without validating", avoid: true, text: "Stamp your paper ticket in the machine as you board, or at the metro entrance. An unvalidated ticket counts as no ticket, and inspectors fine on the spot." },
   { title: "Euronet ATMs", avoid: true, text: "Use ATMs inside bank branches instead." },
   { title: "Tourist exchange booths", avoid: true, text: "Pay by card, or withdraw forints from a bank ATM." },
   { title: "Eating on Váci utca", avoid: true, text: "Walk one street away for better food at better prices." }

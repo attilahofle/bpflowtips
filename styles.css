@@ -306,7 +306,7 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 .tip-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .tip-amounts .btn { padding-left: 4px; padding-right: 4px; font-size: 16px; min-height: 50px; }
 .tipping .tip-note { margin: 12px 0 0; font-size: 13px; color: var(--ink-muted); text-align: center; }
-.ask { margin-top: 16px; padding: 20px; border: 1px solid var(--cream-line); border-radius: var(--radius-md); }
+.ask { margin-top: 16px; padding: 20px; background: var(--surface-cream); border: 1px solid var(--cream-line); border-radius: var(--radius-md); box-shadow: var(--shadow-card); }
 .ask h2 { margin: 0 0 8px; font: 700 23px/1.15 var(--font-display); letter-spacing: -0.3px; color: var(--heading); }
 .ask p { margin: 0 0 16px; }
 .ask .btn { width: 100%; }

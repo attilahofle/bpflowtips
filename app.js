@@ -27,12 +27,12 @@ const TOURS = {
 // img: path to a photo (e.g. "images/cat-baths.webp") to replace the tinted placeholder
 const CATEGORIES = [
   { id: "food", c1: "#B5654A", c2: "#7A3B2A", img: "images/cat-food.webp", label: "Food", home: true, intro: "Proper Hungarian meals, street food for a quick bite, and cakes for after." },
-  { id: "offbeat", c1: "#9A6B4F", c2: "#5A3B2C", img: "images/cat-offbeat.webp", label: "Off the beaten path", home: true, intro: "The Budapest most visitors miss: hidden courtyards, odd little museums and places where locals hang out." },
   { id: "coffee", c1: "#8C6A52", c2: "#4E3829", img: "images/cat-coffee.webp", label: "Coffee", home: true, intro: "Grand old cafés for the atmosphere, specialty spots for the coffee." },
   { id: "baths", c1: "#5F9A96", c2: "#2F6263", img: "images/cat-baths.webp", label: "Thermal baths", home: true, intro: "Each bath has its own character. Pick the one that fits your mood." },
   { id: "danube", c1: "#5B7FA6", c2: "#2C4A6E", img: "images/cat-danube.webp", label: "Danube Cruise", home: true, intro: "See the city from the river, the classic way or the local way." },
   { id: "drinks", c1: "#8A5A7A", c2: "#4E2F48", img: "images/cat-drinks.webp", label: "Drinks & nightlife", home: true, intro: "Ruin bars, wine, craft beer and a rooftop." },
   { id: "rainy", c1: "#7D8794", c2: "#454E5C", img: "images/cat-rainy.webp", label: "Museums & indoors", home: true, intro: "For a rainy afternoon, or when your feet need a break from walking." },
+  { id: "offbeat", c1: "#9A6B4F", c2: "#5A3B2C", img: "images/cat-offbeat.webp", label: "Off the beaten path", home: true, intro: "The Budapest most visitors miss: hidden courtyards, odd little museums and places where locals hang out." },
   { id: "practical", c1: "#8C9460", c2: "#555C38", img: "images/cat-practical.webp", label: "Practical tips", home: true, intro: "Small things that save you money and hassle." }
 ];
 
@@ -95,7 +95,6 @@ const PLACES = [
   { cat: "rainy", group: "Museums & sights", name: "Ludwig Museum", why: "Modern and contemporary art, from Picasso to Central European artists.", price: 2, near: "Müpa, on the Danube bank in District IX", good: ["Art", "Rainy day"], tip: "Open until 8 pm, closed Mondays.", web: "https://www.ludwigmuseum.hu/en", placeId: "ChIJ5_bsZQTdQUcRd39JyGJUeRE" },
   { cat: "rainy", group: "Museums & sights", name: "Hospital in the Rock", why: "Wartime hospital inside Castle Hill.", price: 2, near: "Castle District", good: ["History"], tip: "Guided visits only." },
   { cat: "rainy", group: "Museums & sights", name: "House of Music Hungary", why: "Interactive music museum in City Park.", price: 2, near: "City Park", good: ["Families"], fav: true },
-  { cat: "rainy", group: "Museums & sights", name: "Central Market Hall", why: "Browse, taste, buy paprika.", price: 1, near: "Pest end of Liberty Bridge", good: ["Gifts", "Families"], best: "Weekday morning", tip: "Closed Sundays." },
   { cat: "rainy", group: "Small galleries", name: "Inda Gallery", why: "Contemporary Hungarian and international art, chosen by in-house art historians.", price: 0, near: "Király utca, District VI", good: ["Art", "Free"], tip: "Free to visit. Open Tuesday to Friday afternoons.", web: "https://www.indagaleria.hu/", placeId: "ChIJ69lVf2ncQUcRR6CQ6P8GXCI" },
   { cat: "rainy", group: "Small galleries", name: "Deák Erika Gallery", why: "One of the city's longest-running galleries, open since 1998.", price: 0, near: "Mozsár utca, near the Opera", good: ["Art", "Free"], tip: "Free to visit. Open Wednesday to Friday, midday to 6 pm.", web: "https://deakerikagaleria.hu/", placeId: "ChIJE-dtQ2zcQUcRNx8-dc5Mgr8" },
   { cat: "rainy", group: "Small galleries", name: "Hungarian House of Photography", why: "Photo exhibitions in a historic photographer's studio house, the Mai Manó House.", price: 1, near: "Nagymező utca, near the Opera", good: ["Art", "Photography"], tip: "Small space, about half an hour. Closed Mondays.", web: "https://maimano.hu/", placeId: "ChIJgU5vE2zcQUcRXDGgKYfaaj8" }

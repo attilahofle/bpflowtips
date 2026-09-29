@@ -113,6 +113,7 @@ button { font: inherit; color: inherit; }
 /* size follows screen width so the title stays on two lines next to the photo (with some safety margin) */
 .hero h1 { margin: 0; font: 800 clamp(23px, calc((100vw - 158px) / 8.3), 29px)/1.08 var(--font-display); letter-spacing: -0.8px; color: var(--heading); }
 .hero-text { grid-column: 1 / -1; }
+.no-header .hero { padding-top: 28px; }
 .hero .lead { margin: 2px 0 0; font-size: 19px; line-height: 1.45; font-weight: 500; }
 .hand { height: 20px; width: auto; color: var(--ochre-text); display: inline-block; transform: rotate(-3deg); margin: 6px 0 0 2px; overflow: visible; } /* signature is an inline SVG, no handwriting font needed */
 
@@ -241,6 +242,9 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
   background: var(--surface-card); color: var(--ink); cursor: pointer; font-size: 14px; font-weight: 600;
 }
 .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface-paper); }
+.chip-fav { display: inline-flex; align-items: center; gap: 7px; }
+.chip-fav .icon { width: 16px; height: 16px; color: var(--yellow-hover); stroke-width: 2; }
+.chip-fav[aria-pressed="true"] .icon { color: var(--yellow); fill: var(--yellow); }
 .group-title { margin: 22px 0 2px; }
 
 /* place card (always open) */
@@ -248,13 +252,13 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
   background: var(--surface-cream); border: 1px solid var(--cream-line); border-radius: var(--radius-md);
   box-shadow: var(--shadow-card); margin: 16px 0; transition: border-color .15s ease;
 }
-.card .head { padding: 18px 18px 14px; display: grid; grid-template-columns: 1fr auto; gap: 10px 12px; }
+.card .head { padding: 18px 18px 14px; display: grid; grid-template-columns: 1fr auto auto; gap: 10px 12px; }
 .card .name { margin: 0; font: 700 22px/1.2 var(--font-display); letter-spacing: -0.3px; color: var(--heading); }
 .pick {
   display: inline-block; vertical-align: 3px; margin-left: 6px; font: 700 10.5px/1 var(--font-text); letter-spacing: 1.2px;
   text-transform: uppercase; padding: 5px 8px; border-radius: var(--radius-sm); background: var(--yellow); color: var(--on-yellow);
 }
-.card .price { font-weight: 700; color: var(--ink); font-size: 15px; letter-spacing: 1px; padding-top: 3px; }
+.card .price { grid-column: 2; grid-row: 1; font-weight: 700; color: var(--ink); font-size: 15px; letter-spacing: 1px; padding-top: 3px; }
 .card .price b { color: var(--cream-line); font-weight: 700; }
 .card .why { grid-column: 1 / -1; margin: 0; font-size: 18px; line-height: 1.55; }
 .card .meta { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: 14px; }
@@ -339,4 +343,49 @@ main.pad { padding-bottom: 32px; }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 .toast::before { content: "✓"; color: var(--yellow); font-weight: 800; }
+/* ---------- heart / saved places ---------- */
+.save {
+  grid-column: 3; grid-row: 1; width: 40px; height: 40px; margin: -9px -10px -9px -2px; padding: 0;
+  display: grid; place-items: center; background: none; border: 0; border-radius: 50%; cursor: pointer;
+  color: var(--ink-muted); -webkit-tap-highlight-color: transparent;
+}
+.save .icon { transition: transform .15s ease; }
+.save:active .icon { transform: scale(.82); }
+.save[aria-pressed="true"] { color: #D0443A; }
+.save[aria-pressed="true"] .icon { fill: #D0443A; }
+.tab-ico { position: relative; display: inline-flex; }
+.badge {
+  position: absolute; top: -5px; left: 15px; min-width: 17px; height: 17px; padding: 0 4px; box-sizing: border-box;
+  border-radius: 9px; background: #D0443A; color: #fff; font: 700 10.5px/17px var(--font-text); text-align: center;
+}
+.saved-empty { text-align: center; padding: 56px 12px 24px; }
+.saved-empty .icon { width: 44px; height: 44px; color: var(--cream-line); stroke-width: 1.6; margin-bottom: 10px; }
+.saved-empty h2 { margin: 0 0 6px; font: 700 23px/1.15 var(--font-display); color: var(--heading); }
+.saved-empty p { margin: 0 0 20px; color: var(--ink-muted); }
+.saved-note { margin: 22px 0 0; text-align: center; font-size: 13px; color: var(--ink-muted); }
+
+/* ---------- bottom tab bar ---------- */
+:root { --tabbar-h: 62px; }
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  background: var(--surface-card); border-top: 1px solid var(--line);
+  box-shadow: 0 -6px 18px -12px rgba(22, 35, 58, 0.3);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.tabbar-inner { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); height: var(--tabbar-h); }
+.tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  color: var(--ink-muted); text-decoration: none; font: 600 11.5px/1 var(--font-text); letter-spacing: .1px;
+  -webkit-tap-highlight-color: transparent; position: relative;
+}
+.tab .icon { width: 24px; height: 24px; stroke-width: 1.8; }
+.tab.on { color: var(--heading); }
+.tab.on .icon { color: var(--ochre-text); stroke-width: 2.2; }
+.tab.on::before { content: ""; position: absolute; top: 0; left: 28%; right: 28%; height: 3px; border-radius: 0 0 3px 3px; background: var(--yellow); }
+.tab:focus-visible { outline-offset: -4px; }
+/* room for the bar: the footer stays fully visible above it */
+.has-tabbar .app { padding-bottom: var(--tabbar-h); min-height: calc(100dvh - var(--tabbar-h)); }
+.has-tabbar footer { margin-bottom: 0; padding-bottom: 32px; }
+.has-tabbar .toast { bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom, 0px)); }
+@media (hover: hover) { .tab:hover { color: var(--heading); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

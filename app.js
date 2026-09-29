@@ -16,6 +16,20 @@ const EMAIL = "info@budapestflow.com";
 
 // Category tile label position: "center" (poster style) or "bottom" (original). Change this one word to switch back.
 const TILE_LABELS = "center";
+
+// Header (BudapestFlow logo + share buttons). Temporarily off: set to true to bring it back everywhere.
+const SHOW_HEADER = false;
+
+// Bottom tab bar (app-style navigation). Set SHOW_TABBAR to false to remove it.
+// id: "" = home, "saved" = saved places, otherwise a category id. Keep it to 4–5 tabs.
+const SHOW_TABBAR = true;
+const TABS = [
+  { id: "", href: "#", label: "Home", icon: "home" },
+  { id: "food", href: "#cat/food", label: "Food", icon: "food" },
+  { id: "coffee", href: "#cat/coffee", label: "Coffee", icon: "coffee" },
+  { id: "drinks", href: "#cat/drinks", label: "Drinks", icon: "drinks" },
+  { id: "saved", href: "#saved", label: "Saved", icon: "heart" }
+];
 const INSTAGRAM_URL = "https://instagram.com/budapestflow";
 
 const TOURS = {
@@ -115,7 +129,16 @@ const TIPS = [
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
 const tourKey = TOURS[params.get("tour")] ? params.get("tour") : null;
-const filters = { cheap: false, fav: false };
+const filters = { fav: false };
+
+// Saved places (heart). Stored in this browser only (localStorage); works without it, just not across visits.
+const SAVE_KEY = "bpf-tips-saved";
+const placeKey = p => p.cat + "|" + p.name;
+let saved = new Set();
+try { saved = new Set(JSON.parse(localStorage.getItem(SAVE_KEY) || "[]")); } catch (e) {}
+const persistSaved = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify([...saved])); } catch (e) {} };
+const savedCount = () => PLACES.filter(p => saved.has(placeKey(p))).length;
+let currentTab = "";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ico = (id, cls = "icon") => `<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
@@ -153,6 +176,7 @@ function card(p) {
     <div class="head">
       <h3 class="name">${esc(p.name)}${p.fav ? '<span class="pick">Attila\'s pick</span>' : ""}</h3>
       ${p.price ? `<div class="price">${priceHtml(p.price)}</div>` : ""}
+      <button class="save" data-save="${esc(placeKey(p))}" aria-pressed="${saved.has(placeKey(p))}" aria-label="Save ${esc(p.name)}">${ico("heart")}</button>
       <p class="why">${esc(p.why)}</p>
       <div class="meta">
         <span class="near-to">${ico("pin")}${esc(p.near)}</span>
@@ -193,12 +217,12 @@ function renderHome() {
   const nearTour = tourKey ? PLACES.filter(p => (p.tours || []).includes(tourKey)) : [];
 
   app.innerHTML = `
-    <div class="brandbar pad">
+    ${SHOW_HEADER ? `<div class="brandbar pad">
       <a class="logo" href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours"></a>
       <button class="back" id="share" aria-label="Share this page with a friend">${ico("share")}</button>
-    </div>
+    </div>` : ""}
 
-    <main class="pad">
+    <main class="pad${SHOW_HEADER ? "" : " no-header"}">
       <header class="hero">
         <div class="portrait"><img src="images/attila.webp" alt="Attila Höfle, your guide" width="104" height="104" fetchpriority="high" decoding="async"></div>
         <h1>Thanks for walking with me</h1>
@@ -257,7 +281,7 @@ function renderHome() {
     </main>
     ${siteFooter()}
   `;
-  document.getElementById("share").addEventListener("click", () => sharePage());
+  if (SHOW_HEADER) document.getElementById("share").addEventListener("click", () => sharePage());
 }
 
 function renderCategory(id) {
@@ -271,7 +295,6 @@ function renderCategory(id) {
       <h2>${esc(t.title)}</h2><p>${esc(t.text)}</p></div>`).join("");
   } else {
     let list = PLACES.filter(p => p.cat === id);
-    if (filters.cheap && list.some(p => p.price)) list = list.filter(p => p.price <= 2);
     if (filters.fav && list.some(p => p.fav)) list = list.filter(p => p.fav);
     const groups = [...new Set(list.map(p => p.group || ""))];
     body = list.length
@@ -283,22 +306,21 @@ function renderCategory(id) {
     <div class="topbar pad">
       <button class="back" id="back" aria-label="Back to all categories">${ico("back")}</button>
       <h1>${esc(c.label)}</h1>
-      <button class="back" id="share-cat" aria-label="Share this list with a friend">${ico("share")}</button>
+      ${SHOW_HEADER ? `<button class="back" id="share-cat" aria-label="Share this list with a friend">${ico("share")}</button>` : ""}
     </div>
     <main class="pad">
       <p class="intro">${esc(c.intro)}</p>
-      ${id === "practical" ? "" : `<div class="filters" role="group" aria-label="Filters">
-        ${PLACES.some(p => p.cat === id && p.price) ? `<button class="chip" data-f="cheap" aria-pressed="${filters.cheap}">€€ or less</button>` : ""}
-        ${PLACES.some(p => p.cat === id && p.fav) ? `<button class="chip" data-f="fav" aria-pressed="${filters.fav}">Attila's picks</button>` : ""}
+      ${id === "practical" || !PLACES.some(p => p.cat === id && p.fav) ? "" : `<div class="filters">
+        <button class="chip chip-fav" data-f="fav" aria-pressed="${filters.fav}">${ico("star")}Show only Attila's picks</button>
       </div>`}
       ${body}
     </main>
     ${siteFooter()}
   `;
   document.getElementById("back").addEventListener("click", () => { location.hash = ""; });
-  document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
+  if (SHOW_HEADER) document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
   const clear = document.getElementById("clear");
-  if (clear) clear.addEventListener("click", () => { filters.cheap = filters.fav = false; renderCategory(id); });
+  if (clear) clear.addEventListener("click", () => { filters.fav = false; renderCategory(id); });
   app.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
     filters[b.dataset.f] = !filters[b.dataset.f];
     renderCategory(id);
@@ -347,13 +369,59 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("show"), msg.length > 20 ? 6000 : 2200);
 }
 
+function renderTabbar(current) {
+  const bar = document.getElementById("tabbar");
+  if (!bar) return;
+  if (!SHOW_TABBAR) { bar.remove(); return; }
+  document.body.classList.add("has-tabbar");
+  const n = savedCount();
+  bar.innerHTML = `<div class="tabbar-inner">${TABS.map(t => {
+    const on = t.id === current;
+    const badge = t.id === "saved" && n ? `<b class="badge" aria-label="${n} saved">${n}</b>` : "";
+    return `<a class="tab${on ? " on" : ""}" href="${t.href}"${on ? ' aria-current="page"' : ""}><span class="tab-ico">${ico(t.icon)}${badge}</span><span>${esc(t.label)}</span></a>`;
+  }).join("")}</div>`;
+}
+
+function renderSaved() {
+  const list = PLACES.filter(p => saved.has(placeKey(p)));
+  const body = list.length
+    ? CATEGORIES.map(c => {
+        const ps = list.filter(p => p.cat === c.id);
+        return ps.length ? `<p class="eyebrow group-title">${esc(c.label)}</p>` + ps.map(card).join("") : "";
+      }).join("") + `<p class="saved-note">Saved on this phone only. Clearing your browser data clears the list.</p>`
+    : `<div class="saved-empty">${ico("heart")}<h2>Nothing saved yet</h2><p>Tap the heart on any place to keep it here for later.</p><a class="btn btn-secondary" href="#">Browse the categories</a></div>`;
+  app.innerHTML = `
+    <div class="topbar pad">
+      <button class="back" id="back" aria-label="Back to all categories">${ico("back")}</button>
+      <h1>Saved</h1>
+    </div>
+    <main class="pad">
+      ${body}
+    </main>
+    ${siteFooter()}
+  `;
+  document.getElementById("back").addEventListener("click", () => { location.hash = ""; });
+}
+
+function toggleSave(k) {
+  if (saved.has(k)) saved.delete(k); else { saved.add(k); showToast("Saved to your list"); }
+  persistSaved();
+  document.querySelectorAll("[data-save]").forEach(b => { if (b.dataset.save === k) b.setAttribute("aria-pressed", saved.has(k)); });
+  renderTabbar(currentTab);
+}
+
 function route() {
   const m = location.hash.match(/^#cat\/([\w-]+)/);
-  if (m) renderCategory(m[1]); else renderHome();
+  const isSaved = location.hash === "#saved";
+  if (m) renderCategory(m[1]); else if (isSaved) renderSaved(); else renderHome();
+  currentTab = m ? m[1] : isSaved ? "saved" : "";
+  renderTabbar(currentTab);
   window.scrollTo(0, 0);
 }
 
 app.addEventListener("click", e => {
+  const s = e.target.closest("[data-save]");
+  if (s) { toggleSave(s.dataset.save); return; }
   const b = e.target.closest("[data-cat]");
   if (b) location.hash = "cat/" + b.dataset.cat;
 });

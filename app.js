@@ -1,4 +1,4 @@
-const LOGO = "images/budapestflow-logo.png";
+const LOGO = "images/budapestflow-logo.webp";
 const LAST_UPDATED = "September 2026";
 const REVIEW_URL = "https://www.tripadvisor.com/Attraction_Review-g274887-d8358217-Reviews-BudapestFlow-Budapest_Central_Hungary.html";
 const TOURS_URL = "https://budapestflow.com";
@@ -210,7 +210,7 @@ function card(p) {
 
 function siteFooter() {
   return `<footer class="pad">
-    <a href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours"></a>
+    <a href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours" width="76" height="46"></a>
     <p class="tagline">Small-group walking tours in Budapest, the way locals see it.</p>
     <nav aria-label="BudapestFlow">
       <a href="${TOURS_URL}" target="_blank" rel="noopener">budapestflow.com</a>
@@ -227,7 +227,7 @@ function renderHome() {
 
   app.innerHTML = `
     ${SHOW_HEADER ? `<div class="brandbar pad">
-      <a class="logo" href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours"></a>
+      <a class="logo" href="${TOURS_URL}" target="_blank" rel="noopener"><img src="${LOGO}" alt="BudapestFlow Walking Tours" width="56" height="34"></a>
       <button class="back" id="share" aria-label="Share this page with a friend">${ico("share")}</button>
     </div>` : ""}
 
@@ -258,6 +258,7 @@ function renderHome() {
         </div>
       </nav>
 
+      <div class="below">
       ${reviewBlock()}
 
       <section class="panel" aria-labelledby="more-tours">
@@ -287,6 +288,7 @@ function renderHome() {
         <a class="btn btn-secondary" href="mailto:${EMAIL}?subject=${encodeURIComponent("Question after the tour")}">${ico("mail")}Email me</a>
         <p class="ask-addr">${esc(EMAIL)}</p>
       </section>
+      </div>
     </main>
     ${siteFooter()}
   `;
@@ -503,6 +505,7 @@ function toggleSave(k) {
   renderTabbar(currentTab);
 }
 
+let firstRoute = true;
 function route() {
   const m = location.hash.match(/^#cat\/([\w-]+)/);
   const isSaved = location.hash === "#saved";
@@ -511,7 +514,8 @@ function route() {
   currentTab = m ? m[1] : isSaved ? "saved" : shared ? "shared" : "";
   if (sheetOpen) setSheet(false, false);
   renderTabbar(currentTab);
-  window.scrollTo(0, 0);
+  if (!firstRoute) window.scrollTo(0, 0); // skipped on first load: scrolling right after rendering would force a layout
+  firstRoute = false;
 }
 
 app.addEventListener("click", e => {

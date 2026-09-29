@@ -72,7 +72,7 @@
 *, *::before, *::after { box-sizing: inherit; }
 /* <details> content sits in a shadow slot, so inheritance breaks there: set it explicitly */
 details, details *, details *::before, details *::after { box-sizing: border-box; }
-html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px); -webkit-text-size-adjust: 100%; }
+html { scroll-padding-bottom: calc(var(--tabbar-h, 62px) + env(safe-area-inset-bottom, 0px) + 16px); scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px); -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--surface-paper); color: var(--ink-muted);
   font: 450 18px/1.55 var(--font-text); -webkit-font-smoothing: antialiased;
@@ -111,7 +111,7 @@ button { font: inherit; color: inherit; }
 }
 .portrait img { width: 100%; height: 100%; object-fit: cover; }
 /* size follows screen width so the title stays on two lines next to the photo (with some safety margin) */
-.hero h1 { margin: 0; font: 800 clamp(20px, calc((100vw - 158px) / 8.3), 29px)/1.08 var(--font-display); letter-spacing: -0.8px; color: var(--heading); }
+.hero h1 { margin: 0; align-self: center; font: 800 clamp(20px, calc((100vw - 158px) / 7.8), 32px)/1.08 var(--font-display); letter-spacing: -0.8px; color: var(--heading); }
 .hero-text { grid-column: 1 / -1; }
 .no-header .hero { padding-top: 28px; }
 .hero .lead { margin: 2px 0 0; font-size: clamp(16px, 5.2vw, 19px); line-height: 1.45; font-weight: 500; }
@@ -208,7 +208,7 @@ h1, h2 { text-wrap: balance; }
 }
 .panel h2 { margin: 0 0 8px; font: 800 23px/1.1 var(--font-display); letter-spacing: -0.6px; color: var(--on-dark); }
 .panel p { margin: 0 0 16px; }
-.panel :focus-visible { outline-color: var(--focus-ring-on-dark); }
+.panel .panel .panel :focus-visible { outline-color: var(--focus-ring-on-dark); }
 
 /* ---------- footer ---------- */
 footer {
@@ -219,8 +219,8 @@ footer {
 }
 footer img { height: 46px; width: auto; filter: invert(1); margin-bottom: 12px; }
 footer .tagline { margin: 0 0 18px; color: var(--on-dark); font: 700 18px/1.3 var(--font-display); letter-spacing: -0.2px; max-width: 30ch; }
-footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 14px; }
-footer nav a { color: var(--on-dark); text-decoration: none; font-weight: 600; }
+footer nav { display: flex; flex-wrap: wrap; gap: 0 18px; margin-bottom: 4px; }
+footer nav a { color: var(--on-dark); text-decoration: none; font-weight: 600; padding: 12px 0; }
 footer small { display: block; font-size: 13px; }
 footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 
@@ -253,12 +253,12 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 .chip-fav { display: inline-flex; align-items: center; gap: 7px; }
 .chip-fav .icon { width: 16px; height: 16px; color: var(--yellow-hover); stroke-width: 2; }
 .chip-fav[aria-pressed="true"] .icon { color: var(--yellow); fill: var(--yellow); }
-.group-title { margin: 22px 0 2px; }
+.group-title { margin: 28px 0 4px; font-size: 15px; letter-spacing: 1.4px; }
 
 /* place card (always open) */
 .card {
   background: var(--surface-cream); border: 1px solid var(--cream-line); border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card); margin: 16px 0; transition: border-color .15s ease;
+  box-shadow: var(--shadow-card); margin: 20px 0; transition: border-color .15s ease;
 }
 .card .head { padding: 18px 18px 14px; display: grid; grid-template-columns: 1fr auto auto; gap: 10px 12px; }
 .card .name { margin: 0; font: 700 22px/1.2 var(--font-display); letter-spacing: -0.3px; color: var(--heading); }
@@ -289,7 +289,8 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 .facts .icon { width: 18px; height: 18px; margin-top: 3px; color: var(--ochre-text); stroke-width: 2.5; }
 
 .tipcard { background: var(--surface-cream); border: 1px solid var(--cream-line); border-radius: var(--radius-md); padding: 16px; margin: 12px 0; box-shadow: var(--shadow-card); }
-.tipcard h2 { margin: 0 0 6px; font: 700 21px/1.2 var(--font-display); color: var(--heading); }
+.tipcard .btn { margin-top: 14px; width: 100%; }
+.tipcard h3 { margin: 0 0 6px; font: 700 21px/1.2 var(--font-display); color: var(--heading); }
 .tipcard p { margin: 0; }
 .tipcard.avoid { background: var(--surface-card); border-color: var(--tint-ochre-line); box-shadow: inset 4px 0 0 #D0443A, var(--shadow-card); padding-left: 20px; }
 .tag-avoid .icon { width: 13px; height: 13px; stroke-width: 2.4; }
@@ -304,7 +305,7 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 }
 .contact:active { border-color: var(--yellow); }
 .contact .grow { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.contact strong { font-weight: 700; font-size: 16px; }
+.contact strong { font: 700 20px/1.2 var(--font-display); letter-spacing: -0.2px; color: var(--heading); }
 .contact .grow span { font-size: 14px; color: var(--ink-muted); }
 .contact-ico { width: 42px; height: 42px; border-radius: 50%; background: var(--surface-card); display: grid; place-items: center; color: var(--heading); flex: none; }
 .contact > .icon:last-child { width: 18px; height: 18px; color: var(--ink-muted); }
@@ -324,6 +325,7 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 .ask .btn { width: 100%; }
 .ask .ask-addr { margin: 10px 0 0; text-align: center; font-size: 14px; color: var(--ink-muted); user-select: all; }
 main.pad { padding-bottom: 32px; }
+h1[tabindex="-1"]:focus { outline: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .proto { text-align: center; font-size: 12px; color: var(--on-dark-muted); opacity: .8; margin-top: 12px; }
 

@@ -111,10 +111,10 @@ button { font: inherit; color: inherit; }
 }
 .portrait img { width: 100%; height: 100%; object-fit: cover; }
 /* size follows screen width so the title stays on two lines next to the photo (with some safety margin) */
-.hero h1 { margin: 0; font: 800 clamp(23px, calc((100vw - 158px) / 8.3), 29px)/1.08 var(--font-display); letter-spacing: -0.8px; color: var(--heading); }
+.hero h1 { margin: 0; font: 800 clamp(20px, calc((100vw - 158px) / 8.3), 29px)/1.08 var(--font-display); letter-spacing: -0.8px; color: var(--heading); }
 .hero-text { grid-column: 1 / -1; }
 .no-header .hero { padding-top: 28px; }
-.hero .lead { margin: 2px 0 0; font-size: 19px; line-height: 1.45; font-weight: 500; }
+.hero .lead { margin: 2px 0 0; font-size: clamp(16px, 5.2vw, 19px); line-height: 1.45; font-weight: 500; }
 .hand { height: 20px; width: auto; color: var(--ochre-text); display: inline-block; transform: rotate(-3deg); margin: 6px 0 0 2px; overflow: visible; } /* signature is an inline SVG, no handwriting font needed */
 
 /* ---------- tour banner ---------- */
@@ -231,7 +231,12 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
   width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-card);
   display: grid; place-items: center; cursor: pointer; color: var(--ink); flex: none;
 }
-.topbar h1 { margin: 0; flex: 1; font: 800 23px/1.1 var(--font-display); letter-spacing: -0.5px; color: var(--heading); }
+.back-pill {
+  flex: none; display: inline-flex; align-items: center; gap: 2px; height: 42px; padding: 0 16px 0 10px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-card); color: var(--ink); cursor: pointer; font: 700 15px/1 var(--font-text);
+}
+.back-pill .icon { width: 20px; height: 20px; stroke-width: 2.2; }
+.topbar h1 { margin: 0; flex: 1; min-width: 0; font: 800 23px/1.1 var(--font-display); letter-spacing: -0.5px; color: var(--heading); }
 .topbar img { height: 26px; width: auto; filter: var(--logo-filter); }
 .intro { margin: 16px 0 12px; font-size: 19px; line-height: 1.5; font-weight: 500; }
 
@@ -337,7 +342,7 @@ main.pad { padding-bottom: 32px; }
 .toast {
   position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 50;
   transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
-  display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 999px;
+  display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 999px; width: max-content; max-width: calc(100vw - 32px);
   background: var(--navy-deep); color: #fff; font-weight: 600; font-size: 15px; box-shadow: 0 8px 24px rgba(3,26,50,.25);
   transition: opacity .2s ease, transform .2s ease;
 }
@@ -355,19 +360,39 @@ main.pad { padding-bottom: 32px; }
 .save[aria-pressed="true"] .icon { fill: #D0443A; }
 .tab-ico { position: relative; display: inline-flex; }
 .badge {
-  position: absolute; top: -5px; left: 15px; min-width: 17px; height: 17px; padding: 0 4px; box-sizing: border-box;
+  position: absolute; top: -5px; right: 2px; min-width: 17px; height: 17px; padding: 0 4px; box-sizing: border-box;
   border-radius: 9px; background: #D0443A; color: #fff; font: 700 10.5px/17px var(--font-text); text-align: center;
 }
 .saved-empty { text-align: center; padding: 56px 12px 24px; }
 .saved-empty .icon { width: 44px; height: 44px; color: var(--cream-line); stroke-width: 1.6; margin-bottom: 10px; }
 .saved-empty h2 { margin: 0 0 6px; font: 700 23px/1.15 var(--font-display); color: var(--heading); }
 .saved-empty p { margin: 0 0 20px; color: var(--ink-muted); }
+.list-btn { width: 100%; margin: 4px 0 6px; }
 .saved-note { margin: 22px 0 0; text-align: center; font-size: 13px; color: var(--ink-muted); }
+
+/* ---------- "More" sheet ---------- */
+.sheet-backdrop { position: fixed; inset: 0; z-index: 42; background: rgba(3, 26, 50, .4); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s; }
+.sheet-backdrop.open { opacity: 1; visibility: visible; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 43;
+  max-width: 520px; margin: 0 auto; box-sizing: border-box; padding: 16px 14px 10px;
+  max-height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom, 0px) - 80px); overflow-y: auto;
+  background: var(--surface-card); border-radius: 22px 22px 0 0; box-shadow: 0 -12px 32px -14px rgba(3, 26, 50, .4);
+  transform: translateY(16px); opacity: 0; visibility: hidden; transition: transform .2s ease, opacity .2s ease, visibility .2s;
+}
+.sheet.open { transform: none; opacity: 1; visibility: visible; }
+.sheet h2 { margin: 0 6px 8px; font: 700 12px/1.3 var(--font-text); letter-spacing: 1.5px; text-transform: uppercase; color: var(--ochre-text); }
+.sheet ul { list-style: none; margin: 0; padding: 0; }
+.sheet-row { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 6px 8px; border-radius: 14px; text-decoration: none; color: var(--heading); font: 700 17px/1.2 var(--font-display); }
+.sheet-row .icon:last-child { margin-left: auto; width: 18px; height: 18px; color: #6A7388; }
+.sheet-row.on { background: #FBE6B5; }
+.sheet-thumb { flex: none; width: 44px; height: 44px; border-radius: 12px; background-size: cover; background-position: center; }
+body.sheet-open { overflow: hidden; }
 
 /* ---------- bottom tab bar ---------- */
 :root { --tabbar-h: 62px; }
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 44;
   background: var(--surface-card); border-top: 1px solid var(--line);
   box-shadow: 0 -6px 18px -12px rgba(22, 35, 58, 0.3);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -375,13 +400,16 @@ main.pad { padding-bottom: 32px; }
 .tabbar-inner { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); height: var(--tabbar-h); }
 .tab {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  color: var(--ink-muted); text-decoration: none; font: 600 11.5px/1 var(--font-text); letter-spacing: .1px;
+  color: #6A7388; text-decoration: none; font: 600 11.5px/1 var(--font-text); letter-spacing: .1px;
   -webkit-tap-highlight-color: transparent; position: relative;
+  background: none; border: 0; padding: 0; cursor: pointer; appearance: none;
 }
+.tab .tab-ico { width: 58px; height: 30px; align-items: center; justify-content: center; border-radius: 15px; transition: background-color .15s ease; }
 .tab .icon { width: 24px; height: 24px; stroke-width: 1.8; }
+/* active tab, as in Material 3 / iOS: soft tonal pill + darker, slightly heavier icon; the label only changes colour (no bold, so nothing shifts) */
 .tab.on { color: var(--heading); }
-.tab.on .icon { color: var(--ochre-text); stroke-width: 2.2; }
-.tab.on::before { content: ""; position: absolute; top: 0; left: 28%; right: 28%; height: 3px; border-radius: 0 0 3px 3px; background: var(--yellow); }
+.tab.on .tab-ico { background: #FBE6B5; }
+.tab.on .icon { color: var(--heading); stroke-width: 2.1; }
 .tab:focus-visible { outline-offset: -4px; }
 /* room for the bar: the footer stays fully visible above it */
 .has-tabbar .app { padding-bottom: var(--tabbar-h); min-height: calc(100dvh - var(--tabbar-h)); }

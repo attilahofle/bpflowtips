@@ -361,7 +361,7 @@ main.pad { padding-bottom: 32px; }
 .tab-ico { position: relative; display: inline-flex; }
 .badge {
   position: absolute; top: -5px; right: 2px; min-width: 17px; height: 17px; padding: 0 4px; box-sizing: border-box;
-  border-radius: 9px; background: #D0443A; color: #fff; font: 700 10.5px/17px var(--font-text); text-align: center;
+  border-radius: 9px; background: var(--yellow); color: var(--heading); font: 700 10.5px/17px var(--font-text); text-align: center;
 }
 .saved-empty { text-align: center; padding: 56px 12px 24px; }
 .saved-empty .icon { width: 44px; height: 44px; color: var(--cream-line); stroke-width: 1.6; margin-bottom: 10px; }
@@ -400,7 +400,7 @@ body.sheet-open { overflow: hidden; }
 .tabbar-inner { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); height: var(--tabbar-h); }
 .tab {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  color: #6A7388; text-decoration: none; font: 600 11.5px/1 var(--font-text); letter-spacing: .1px;
+  color: #556078; text-decoration: none; font: 600 11.5px/1 var(--font-text); letter-spacing: .1px;
   -webkit-tap-highlight-color: transparent; position: relative;
   background: none; border: 0; padding: 0; cursor: pointer; appearance: none;
 }

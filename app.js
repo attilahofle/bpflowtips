@@ -1,5 +1,4 @@
 const LOGO = "images/budapestflow-logo.webp";
-const LAST_UPDATED = "September 2026";
 const REVIEW_URL = "https://www.tripadvisor.com/Attraction_Review-g274887-d8358217-Reviews-BudapestFlow-Budapest_Central_Hungary.html";
 const TOURS_URL = "https://budapestflow.com";
 const GOOGLE_REVIEW_URL = "#"; // TODO: your Google review link (Business Profile > Ask for reviews)
@@ -57,6 +56,8 @@ const CATEGORIES = [
 // web: the place's own link. Website, Facebook or Instagram are all fine; the button label and icon follow the link.
 //      Leave web out while you're still collecting links (a greyed-out "Website" button shows);
 //      set web: "" if the place has no link at all (the button disappears, "See on map" goes full width).
+// cta: optional label for that button instead of "Website", e.g. cta: "Book a tasting" or cta: "Book a ticket".
+//      Then web should be the booking page. Keep it short (about 16 characters); longer labels wrap to two lines.
 // placeId: Google Maps place id, so "See on map" opens the exact listing (optional; without it Maps searches by name).
 const PLACES = [
   { cat: "food", group: "Hungarian kitchen", name: "Menza", why: "Retro-styled classic on Liszt Ferenc Square. I like it best for a weekday lunch.", price: 2, near: "Liszt Ferenc Square, near Oktogon", good: ["Lunch", "Dinner"], tip: "Good-value weekday lunch menu. Terrace in summer.", order: "Garlic cream soup, lecsó", web: "https://menzaetterem.hu/en/", placeId: "ChIJ1dRim27cQUcR_kCX7BuqHTY" },
@@ -175,10 +176,11 @@ function reviewBlock() {
 
 // Second button on a place card: label + icon follow the link (own site, Facebook or Instagram).
 function linkBtn(p) {
-  if (p.web === undefined) return `<a class="btn btn-secondary" href="#" onclick="return false" aria-disabled="true">${ico("link")}Website</a>`;
+  if (p.web === undefined) return `<a class="btn btn-secondary" href="#" onclick="return false" aria-disabled="true">${ico("link")}${p.cta ? esc(p.cta) : "Website"}</a>`;
   if (!p.web) return "";
   const host = (() => { try { return new URL(p.web).hostname.replace(/^www\.|^m\./, ""); } catch (e) { return ""; } })();
-  const kind = /(^|\.)(facebook\.com|fb\.com)$/.test(host) ? ["facebook", "Facebook"]
+  const kind = p.cta ? [/ticket/i.test(p.cta) ? "ticket" : /book|reserve|table|tasting|cruise|tour/i.test(p.cta) ? "calendar" : "link", esc(p.cta)]
+             : /(^|\.)(facebook\.com|fb\.com)$/.test(host) ? ["facebook", "Facebook"]
              : /(^|\.)instagram\.com$/.test(host) ? ["instagram", "Instagram"]
              : ["link", "Website"];
   return `<a class="btn btn-secondary" href="${esc(p.web)}" target="_blank" rel="noopener">${ico(kind[0])}${kind[1]}</a>`;
@@ -206,7 +208,7 @@ function cardHtml(p, lvl) {
         ${p.order ? `<li>${ico("check")}<span><strong>Order:</strong> ${esc(p.order)}</span></li>` : ""}
         ${p.tip ? `<li>${ico("check")}<span><strong>Tip:</strong> ${esc(p.tip)}</span></li>` : ""}
       </ul>` : ""}
-      <div class="btn-row">
+      <div class="btn-row${p.cta && p.web !== "" ? " has-cta" : ""}">
         <a class="btn btn-primary" href="${mapsUrl(p)}" target="_blank" rel="noopener">${ico("pin")}See on map</a>
         ${linkBtn(p)}
       </div>
@@ -223,7 +225,7 @@ function siteFooter() {
       <a href="${INSTAGRAM_URL}" target="_blank" rel="noopener">Instagram</a>
       <a href="${REVIEW_URL}" target="_blank" rel="noopener">Tripadvisor</a>
     </nav>
-    <small>© ${new Date().getFullYear()} BudapestFlow Walking Tours · Tips updated ${esc(LAST_UPDATED)}</small>
+    <small>© ${new Date().getFullYear()} BudapestFlow Walking Tours</small>
   </footer>`;
 }
 

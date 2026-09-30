@@ -151,7 +151,7 @@ h1, h2 { text-wrap: balance; }
 .tile-ph { position: absolute; top: 8px; right: 8px; z-index: 1; font: 700 9.5px/1 var(--font-text); letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.45); border-radius: 5px; padding: 4px 6px; }
 
 /* centered-label variant (TILE_LABELS = "center"); delete this block + the constant to remove it entirely */
-.labels-center .tile::after { background: radial-gradient(ellipse at 50% 50%, rgba(46, 24, 10, .74) 0%, #04172b9e 60%, rgba(46, 24, 10, .56) 100%); }
+.labels-center .tile::after { background: radial-gradient(ellipse at 50% 50%, rgba(46, 24, 10, .72) 0%, rgba(4, 23, 43, .58) 60%, rgba(46, 24, 10, .42) 100%); }
 .labels-center .tile-label {
   inset: 0; display: grid; place-items: center; padding: 10px 12px; text-align: center;
   text-shadow: 0 2px 14px rgba(40,20,8,.75);
@@ -282,6 +282,11 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
 .card .body { padding: 14px 18px 18px; border-top: 1px solid var(--cream-line); }
 .card .body .btn-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 12px; }
 .card .body .btn { padding-left: 10px; padding-right: 10px; white-space: nowrap; gap: 6px; }
+.card .body .btn-row .btn + .btn { white-space: normal; line-height: 1.15; text-align: center; }
+/* a custom label (cta) gets the room "See on map" doesn't need; on narrower phones its icon makes way for the text */
+.card .body .btn-row { container-type: inline-size; }
+.card .body .btn-row.has-cta { grid-template-columns: auto minmax(0, 1fr); }
+@container (max-width: 300px) { .btn-row.has-cta .btn + .btn .icon { display: none; } }
 .facts { list-style: none; padding: 0; margin: 0 0 16px; }
 .facts li { display: flex; gap: 10px; margin: 0 0 10px; color: var(--ink); line-height: 1.5; }
 .facts li:last-child { margin-bottom: 0; }

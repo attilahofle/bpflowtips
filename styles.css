@@ -199,9 +199,6 @@ h1, h2 { text-wrap: balance; }
 .review .ta-dots i { width: 9px; height: 9px; }
 .review .rv-label { width: 92px; text-align: left; }
 
-/* everything below the first screen is not laid out or painted until it is near the viewport (faster first render).
-   The padding/negative margin leaves room for the card shadows, which paint containment would otherwise clip. */
-.below { content-visibility: auto; contain-intrinsic-size: auto 1700px; padding: 40px 20px; margin: -40px -20px; }
 .panel {
   margin-top: 26px; background: var(--navy-deep); color: var(--on-dark-muted); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-panel); padding: 24px 20px;

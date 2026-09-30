@@ -266,7 +266,6 @@ function renderHome() {
         </div>
       </nav>
 
-      <div class="below">
       ${reviewBlock()}
 
       <section class="panel" aria-labelledby="more-tours">
@@ -296,7 +295,6 @@ function renderHome() {
         <a class="btn btn-secondary" href="mailto:${EMAIL}?subject=${encodeURIComponent("Question after the tour")}">${ico("mail")}Email me</a>
         <p class="ask-addr">${esc(EMAIL)}</p>
       </section>
-      </div>
     </main>
     ${siteFooter()}
   `;

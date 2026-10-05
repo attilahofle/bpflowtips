@@ -2,14 +2,16 @@ const LOGO = "images/budapestflow-logo.webp";
 const REVIEW_URL = "https://www.tripadvisor.com/Attraction_Review-g274887-d8358217-Reviews-BudapestFlow-Budapest_Central_Hungary.html";
 const TOURS_URL = "https://budapestflow.com";
 const GOOGLE_REVIEW_URL = "#"; // TODO: your Google review link (Business Profile > Ask for reviews)
-// Tip buttons: one Stripe Payment Link per amount, "other" = a link where the guest types the amount.
-// TODO: paste the real Stripe links. While a value is "#", the button is shown but does nothing.
+// Tip amounts: a segmented selector (the chosen amount turns dark) + one yellow button that opens that amount's Stripe Payment Link.
+// featured: true = pre-selected. "Other" = a link where the guest types the amount. cta = optional button text.
+// TODO: paste the real Stripe links. While a url is "#", the button only shows "Payment link coming soon".
 const TIP_LINKS = [
   { label: "€10", url: "#" },
   { label: "€20", url: "#", featured: true },
   { label: "€30", url: "#" },
-  { label: "Other", url: "#" }
+  { label: "Other", url: "#", cta: "Choose your amount" }
 ];
+const tipGo = t => `<a class="btn btn-primary" id="tip-go" href="${esc(t.url)}"${t.url === "#" ? "" : ' target="_blank" rel="noopener"'}>${ico("heart")}${esc(t.cta || "Leave a " + t.label + " tip")}</a>`;
 const CARD_URL = "https://cv.perpatvar.xyz/";
 const EMAIL = "info@budapestflow.com";
 
@@ -282,11 +284,13 @@ function renderHome() {
 
       <section class="tipping" aria-labelledby="tip-title">
         <h2 id="tip-title">Want to say thanks?</h2>
-        <p>Tipping your guide is never expected, always appreciated. It goes straight to me.</p>
-        <div class="tip-amounts" role="group" aria-label="Choose a tip amount">
-          ${TIP_LINKS.map(t => `<a class="btn ${t.featured ? "btn-primary" : "btn-secondary"}" href="${t.url}"${t.url === "#" ? ' onclick="return false" aria-disabled="true"' : ' target="_blank" rel="noopener"'}>${esc(t.label)}</a>`).join("")}
-        </div>
-        <p class="tip-note">Card, Apple Pay or Google Pay. Secure payment via Stripe.</p>
+        <p>If I helped make your days in Budapest a little better, a tip is a lovely way to say thanks. It's never expected, and it goes straight to me.</p>
+        <fieldset class="tip-seg">
+          <legend class="sr">Choose a tip amount</legend>
+          ${TIP_LINKS.map((t, i) => `<label class="tip-opt"><input type="radio" name="tip" value="${i}"${t.featured ? " checked" : ""}><span>${esc(t.label)}</span></label>`).join("")}
+        </fieldset>
+        ${tipGo(TIP_LINKS.find(t => t.featured) || TIP_LINKS[0])}
+        <p class="tip-note">Pay by card, Apple Pay or Google Pay. <span class="nb">No sign-up</span>, secure payment via Stripe.</p>
       </section>
 
       <section class="ask" aria-labelledby="ask-title">
@@ -536,10 +540,18 @@ function route() {
 }
 
 app.addEventListener("click", e => {
+  const tg = e.target.closest("#tip-go");
+  if (tg && tg.getAttribute("href") === "#") { e.preventDefault(); showToast("Payment link coming soon"); return; }
   const s = e.target.closest("[data-save]");
   if (s) { toggleSave(s.dataset.save); return; }
   const b = e.target.closest("[data-cat]");
   if (b) location.hash = "cat/" + b.dataset.cat;
 });
+app.addEventListener("change", e => {
+  if (!e.target.matches('input[name="tip"]')) return;
+  const go = document.getElementById("tip-go");
+  if (go) go.outerHTML = tipGo(TIP_LINKS[+e.target.value]);
+});
 window.addEventListener("hashchange", route);
+document.addEventListener("touchstart", () => {}, { passive: true }); // lets iOS Safari show the :active pressed states
 route();

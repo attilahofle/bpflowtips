@@ -10,7 +10,7 @@
 /* ---------- BudapestFlow tokens (from the BudapestFlow Design System) ---------- */
 :root {
   --surface-paper: #FBF9F4;
-  --surface-cream: #f3ecdd2e;
+  --surface-cream: #F3ECDD;
   --cream-line: #E2D6BE;
   --surface-card: #FFFFFF;
   --line: #E6DDCB;
@@ -316,11 +316,19 @@ footer :focus-visible { outline-color: var(--focus-ring-on-dark); }
   border-radius: var(--radius-md); box-shadow: var(--shadow-card);
 }
 .tipping h2 { margin: 0 0 8px; font: 700 23px/1.15 var(--font-display); letter-spacing: -0.3px; color: var(--heading); }
-.tipping p { margin: 0 0 16px; }
+.tipping p { margin: 0 0 16px; text-wrap: pretty; }
+.nb { white-space: nowrap; }
 .tipping .btn { width: 100%; }
-.tip-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.tip-amounts .btn { padding-left: 4px; padding-right: 4px; font-size: 16px; min-height: 50px; }
-.tipping .tip-note { margin: 12px 0 0; font-size: 13px; color: var(--ink-muted); text-align: center; }
+/* amount selector = one segmented control (not four buttons): it reads as a choice, while yellow stays reserved for actions */
+.tip-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin: 0 0 14px; padding: 4px; min-inline-size: 0;
+  background: var(--surface-card); border: 1.5px solid var(--tint-ochre-line); border-radius: 16px; }
+.tip-opt { position: relative; display: block; cursor: pointer; }
+.tip-opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.tip-opt span { display: flex; align-items: center; justify-content: center; min-height: 46px; border-radius: 12px; font: 700 16px/1 var(--font-text); color: var(--ink); transition: background-color .12s ease, color .12s ease; }
+.tip-opt input:checked + span { background: var(--heading); color: #fff; }
+.tip-opt input:focus-visible + span { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.tip-opt:active input:not(:checked) + span { background: var(--tint-ochre-hover); }
+.tipping .tip-note { text-wrap: balance; margin: 12px 0 0; font-size: 13px; color: var(--ink-muted); text-align: center; }
 .ask { margin-top: 16px; padding: 20px; background: var(--surface-cream); border: 1px solid var(--cream-line); border-radius: var(--radius-md); box-shadow: var(--shadow-card); }
 .ask h2 { margin: 0 0 8px; font: 700 23px/1.15 var(--font-display); letter-spacing: -0.3px; color: var(--heading); }
 .ask p { margin: 0 0 16px; }
@@ -343,7 +351,10 @@ h1[tabindex="-1"]:focus { outline: none; }
 /* touch feedback: a short pressed state instead */
 
 .btn-primary:active { background: var(--yellow-hover); }
-.btn-secondary:active, .back:active { background: var(--tint-ochre-hover); }
+.btn-secondary:active, .back:active, .back-pill:active, .chip:active, .sheet-row:active { background: var(--tint-ochre-hover); }
+/* no grey browser flash when tapping on iOS/Android: every control has its own pressed state above */
+html { -webkit-tap-highlight-color: transparent; }
+a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }
 
 /* "Link copied" toast for the share fallback */
 .toast {

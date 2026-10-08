@@ -12,12 +12,18 @@ const TIP_LINKS = [
   { label: "Other", url: "#", cta: "Choose your amount" }
 ];
 const tipGo = t => `<a class="btn btn-primary" id="tip-go" href="${esc(t.url)}"${t.url === "#" ? "" : ' target="_blank" rel="noopener"'}>${ico("heart")}${esc(t.cta || "Leave a " + t.label + " tip")}</a>`;
-const CARD_URL = "https://cv.perpatvar.xyz/";
+const CARD_URL = "https://attila.budapestflow.com";
 const EMAIL = "info@budapestflow.com";
 
 
 // Category tile label position: "center" (poster style) or "bottom" (original). Change this one word to switch back.
 const TILE_LABELS = "center";
+
+// Food place cards: "compact" (Yelp-style: photo on the left, details fold out) or "classic" (original big cards).
+// Change this one word to switch back. The previous version is also kept in git: tag archive/food-cards-v1.
+const FOOD_LAYOUT = "compact";
+// Photo for a compact card: the place's own img if it has one, otherwise one per group, otherwise the category photo.
+const GROUP_IMG = { "Hungarian kitchen": "images/cat-food.webp", "Street food": "images/cat-quick.webp", "Cakes & sweets": "images/cat-sweets.webp" };
 
 // Header (BudapestFlow logo + share buttons). Temporarily off: set to true to bring it back everywhere.
 const SHOW_HEADER = false;
@@ -137,7 +143,8 @@ const TIPS = [
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
 const tourKey = TOURS[params.get("tour")] ? params.get("tour") : null;
-const filters = { fav: false };
+const filters = { fav: false, tag: null }; // tag: { cat, name } — set by tapping a "good for" tag on a card
+let tagCat = null; // category being rendered: its cards get tappable tags (plain labels everywhere else)
 
 // Saved places (heart). Stored in this browser only (localStorage); works without it, just not across visits.
 const SAVE_KEY = "bpf-tips-saved";
@@ -188,9 +195,16 @@ function linkBtn(p) {
   return `<a class="btn btn-secondary" href="${esc(p.web)}" target="_blank" rel="noopener">${ico(kind[0])}${kind[1]}</a>`;
 }
 
+// "Good for" tag: a filter button inside a category list, a plain label elsewhere.
+function goodTag(g) {
+  if (!tagCat) return `<span class="tag"><span class="sr">Good for </span>${esc(g)}</span>`;
+  const on = !!(filters.tag && filters.tag.cat === tagCat && filters.tag.name === g);
+  return `<button class="tag tag-btn" data-tag="${esc(g)}" aria-pressed="${on}"><span class="sr">Show only places good for </span>${esc(g)}</button>`;
+}
 function card(p) { return cardHtml(p, 3); }
 function cardTop(p) { return cardHtml(p, 2); } // when the list has no group headings (h2), place names follow the page title (h1) directly
 function cardHtml(p, lvl) {
+  if (FOOD_LAYOUT === "compact" && p.cat === "food") return cardCompact(p, lvl);
   return `<article class="card">
     <div class="head">
       <h${lvl} class="name">${esc(p.name)}${p.fav ? '<span class="pick">Attila\'s pick</span>' : ""}</h${lvl}>
@@ -201,7 +215,7 @@ function cardHtml(p, lvl) {
         <span class="near-to">${ico("pin")}${esc(p.near)}</span>
       </div>
       <div class="tags">
-        ${(p.good || []).map(g => `<span class="tag"><span class="sr">Good for </span>${esc(g)}</span>`).join("")}
+        ${(p.good || []).map(goodTag).join("")}
         ${p.best ? `<span class="tag best">${ico("clock")}Best: ${esc(p.best)}</span>` : ""}
       </div>
     </div>
@@ -215,6 +229,43 @@ function cardHtml(p, lvl) {
         ${linkBtn(p)}
       </div>
     </div>
+  </article>`;
+}
+
+// Yelp-style card: photo + name, price, tags and area on top; the "why" below; order, tip and buttons fold out.
+function cardCompact(p, lvl) {
+  const img = p.img || GROUP_IMG[p.group] || (catById(p.cat) || {}).img;
+  return `<article class="card card-c">
+    <div class="head">
+      ${img ? `<img class="thumb" src="${esc(img)}" alt="" width="112" height="112" loading="lazy" decoding="async">` : ""}
+      <div class="info">
+        <h${lvl} class="name">${esc(p.name)}</h${lvl}>
+        <button class="save" data-save="${esc(placeKey(p))}" aria-pressed="${saved.has(placeKey(p))}" aria-label="Save ${esc(p.name)}">${ico("heart")}</button>
+        <div class="sub">
+          ${p.price ? `<span class="price">${priceHtml(p.price)}</span>` : ""}
+          ${p.fav ? `<span class="pick">Attila's pick</span>` : ""}
+        </div>
+        <div class="tags">
+          ${(p.good || []).map(goodTag).join("")}
+          ${p.best ? `<span class="tag best">${ico("clock")}Best: ${esc(p.best)}</span>` : ""}
+        </div>
+        <div class="meta"><a class="near-to" href="${mapsUrl(p)}" target="_blank" rel="noopener" aria-label="${esc(p.near)}, open in Google Maps">${ico("pin")}${esc(p.near)}</a></div>
+      </div>
+      <p class="why">${esc(p.why)}</p>
+    </div>
+    <details class="fold">
+      <summary>${ico("chev")}<span>${p.order || p.tip ? "What to order, tips & map" : "Map & website"}</span></summary>
+      <div class="body">
+        ${(p.order || p.tip) ? `<ul class="facts">
+          ${p.order ? `<li>${ico("check")}<span><strong>Order:</strong> ${esc(p.order)}</span></li>` : ""}
+          ${p.tip ? `<li>${ico("check")}<span><strong>Tip:</strong> ${esc(p.tip)}</span></li>` : ""}
+        </ul>` : ""}
+        <div class="btn-row${p.cta && p.web !== "" ? " has-cta" : ""}">
+          <a class="btn btn-primary" href="${mapsUrl(p)}" target="_blank" rel="noopener">${ico("pin")}See on map</a>
+          ${linkBtn(p)}
+        </div>
+      </div>
+    </details>
   </article>`;
 }
 
@@ -314,6 +365,7 @@ function renderCategory(id) {
   const c = catById(id);
   if (!c) { goHome(); return; }
 
+  const activeTag = filters.tag && filters.tag.cat === id ? filters.tag.name : null;
   let body;
   if (id === "practical") {
     body = [...new Set(TIPS.map(t => t.group))].map(g => `<h2 class="eyebrow group-title">${esc(g)}</h2>` + TIPS.filter(t => t.group === g).map(t => `<div class="tipcard${t.avoid ? " avoid" : ""}">
@@ -323,10 +375,13 @@ function renderCategory(id) {
   } else {
     let list = PLACES.filter(p => p.cat === id);
     if (filters.fav && list.some(p => p.fav)) list = list.filter(p => p.fav);
+    if (activeTag) list = list.filter(p => (p.good || []).includes(activeTag));
+    tagCat = id;
     const groups = [...new Set(list.map(p => p.group || ""))];
     body = list.length
       ? groups.map(g => (g ? `<h2 class="eyebrow group-title">${esc(g)}</h2>` : "") + list.filter(p => (p.group || "") === g).map(list.some(p => p.group) ? card : cardTop).join("")).join("")
       : `<p class="empty">Nothing matches these filters right now. <button id="clear">Show all picks</button></p>`;
+    tagCat = null;
   }
 
   app.innerHTML = `
@@ -337,8 +392,9 @@ function renderCategory(id) {
     </header>
     <main class="pad">
       <p class="intro">${esc(c.intro)}</p>
-      ${id === "practical" || !PLACES.some(p => p.cat === id && p.fav) ? "" : `<div class="filters">
-        <button class="chip chip-fav" data-f="fav" aria-pressed="${filters.fav}">${ico("star")}Show only Attila's picks</button>
+      ${id === "practical" || !(activeTag || PLACES.some(p => p.cat === id && p.fav)) ? "" : `<div class="filters">
+        ${activeTag ? `<button class="chip chip-tag" id="clear-tag" aria-label="Remove filter: ${esc(activeTag)}">${esc(activeTag)}${ico("x")}</button>` : ""}
+        ${PLACES.some(p => p.cat === id && p.fav) ? `<button class="chip chip-fav" data-f="fav" aria-pressed="${filters.fav}">${ico("star")}Show only Attila's picks</button>` : ""}
       </div>`}
       ${body}
     </main>
@@ -347,7 +403,9 @@ function renderCategory(id) {
   document.getElementById("back").addEventListener("click", () => { goHome(); });
   if (SHOW_HEADER) document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
   const clear = document.getElementById("clear");
-  if (clear) clear.addEventListener("click", () => { filters.fav = false; renderCategory(id); });
+  if (clear) clear.addEventListener("click", () => { filters.fav = false; filters.tag = null; renderCategory(id); });
+  const clearTag = document.getElementById("clear-tag");
+  if (clearTag) clearTag.addEventListener("click", () => { filters.tag = null; renderCategory(id); });
   app.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
     filters[b.dataset.f] = !filters[b.dataset.f];
     renderCategory(id);
@@ -550,6 +608,18 @@ function route() {
 app.addEventListener("click", e => {
   const tg = e.target.closest("#tip-go");
   if (tg && tg.getAttribute("href") === "#") { e.preventDefault(); showToast("Payment link coming soon"); return; }
+  const t = e.target.closest("[data-tag]");
+  if (t) {
+    const m = location.hash.match(/^#cat\/([\w-]+)/);
+    if (!m) return;
+    const name = t.dataset.tag, same = filters.tag && filters.tag.cat === m[1] && filters.tag.name === name;
+    filters.tag = same ? null : { cat: m[1], name };
+    renderCategory(m[1]);
+    const f = app.querySelector(".filters");
+    window.scrollTo(0, 0);
+    if (f) (f.querySelector("#clear-tag") || f).focus({ preventScroll: true });
+    return;
+  }
   const s = e.target.closest("[data-save]");
   if (s) { toggleSave(s.dataset.save); return; }
   const b = e.target.closest("[data-cat]");

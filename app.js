@@ -305,9 +305,14 @@ function renderHome() {
   if (SHOW_HEADER) document.getElementById("share").addEventListener("click", () => sharePage());
 }
 
+function goHome() {
+  history.pushState(null, "", location.pathname + location.search);
+  route();
+}
+
 function renderCategory(id) {
   const c = catById(id);
-  if (!c) { location.hash = ""; return; }
+  if (!c) { goHome(); return; }
 
   let body;
   if (id === "practical") {
@@ -339,7 +344,7 @@ function renderCategory(id) {
     </main>
     ${siteFooter()}
   `;
-  document.getElementById("back").addEventListener("click", () => { location.hash = ""; });
+  document.getElementById("back").addEventListener("click", () => { goHome(); });
   if (SHOW_HEADER) document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
   const clear = document.getElementById("clear");
   if (clear) clear.addEventListener("click", () => { filters.fav = false; renderCategory(id); });
@@ -465,13 +470,13 @@ function listPage(title, inner) {
     </main>
     ${siteFooter()}
   `;
-  document.getElementById("back").addEventListener("click", () => { location.hash = ""; });
+  document.getElementById("back").addEventListener("click", () => { goHome(); });
 }
 
 function renderSaved() {
   const list = PLACES.filter(p => saved.has(placeKey(p)));
   if (!list.length) {
-    listPage("Saved", `<div class="saved-empty">${ico("heart")}<h2>Nothing saved yet</h2><p>Tap the heart on any place to keep it here for later.</p><a class="btn btn-secondary" href="#">Browse the categories</a></div>`);
+    listPage("Saved", `<div class="saved-empty">${ico("heart")}<h2>Nothing saved yet</h2><p>Tap the heart on any place to keep it here for later.</p><a class="btn btn-secondary" href="#" onclick="goHome();return false">Browse the categories</a></div>`);
     return;
   }
   listPage("Saved", `<p class="intro">Your saved places. Send the list to a friend, or keep it for tomorrow.</p>
@@ -485,7 +490,7 @@ function renderSaved() {
 function renderShared(ids) {
   const list = PLACES.filter(p => ids.includes(hashKey(placeKey(p))));
   if (!list.length) {
-    listPage("Shared list", `<div class="saved-empty">${ico("heart")}<h2>This list is empty</h2><p>The link doesn't match any places. It may be out of date.</p><a class="btn btn-secondary" href="#">Browse the categories</a></div>`);
+    listPage("Shared list", `<div class="saved-empty">${ico("heart")}<h2>This list is empty</h2><p>The link doesn't match any places. It may be out of date.</p><a class="btn btn-secondary" href="#" onclick="goHome();return false">Browse the categories</a></div>`);
     return;
   }
   listPage("Shared list", `<p class="intro">A friend shared ${list.length === 1 ? "this place" : "these " + list.length + " places"} with you.</p>

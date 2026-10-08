@@ -446,6 +446,8 @@ function setSheet(open, returnFocus) {
   bar.addEventListener("click", e => {
     if (e.target.closest("#tab-more")) { setSheet(!sheetOpen, sheetOpen); return; }
     if (sheetOpen && e.target.closest("a.tab")) setSheet(false, false);
+    const home = e.target.closest('a.tab[href="#"]');
+    if (home) { e.preventDefault(); goHome(); }
   });
   sheet.addEventListener("click", e => { if (e.target.closest(".sheet-row")) setSheet(false, false); });
   backdrop.addEventListener("click", () => setSheet(false, true));
@@ -526,6 +528,7 @@ function toggleSave(k) {
 const BASE_TITLE = document.title;
 let firstRoute = true;
 function route() {
+  if (location.href.endsWith("#")) history.replaceState(null, "", location.pathname + location.search); // drop a bare trailing "#"
   const m = location.hash.match(/^#cat\/([\w-]+)/);
   const isSaved = location.hash === "#saved";
   const shared = location.hash.match(/^#saved=([\w,]*)$/);

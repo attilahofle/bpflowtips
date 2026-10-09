@@ -19,16 +19,28 @@ const EMAIL = "info@budapestflow.com";
 // Category tile label position: "center" (poster style) or "bottom" (original). Change this one word to switch back.
 const TILE_LABELS = "center";
 
-// Food place cards: "compact" (Yelp-style: photo on the left, details fold out) or "classic" (original big cards).
-// Change this one word to switch back. The previous version is also kept in git: tag archive/food-cards-v1.
-const FOOD_LAYOUT = "compact";
+// Place cards in every category: "compact" (Yelp-style: photo on the left, details fold out) or "classic" (original big cards).
+// Change this one word to switch back. The previous food layout is also kept in git: tag archive/food-cards-v1.
+const CARD_LAYOUT = "compact";
 // Photo for a compact card: the place's own img if it has one, otherwise one per group, otherwise the category photo.
 // Place photos (images/places/*.webp, 240x240) were taken from these pages on 2026-10-08. Not our own photos and no licence obtained yet:
 //   menza (chicken paprikash): menzaetterem.hu · cafe-kor: offbeatbudapest.com · koleves (duck leg, cropped): kolevesvendeglo.hu · getto-gulyas: gettogulyas.hu
 //   rosenstein (flódni): rosenstein.hu · tati: tatibudapest.com · retro-langos: retrolangos.hu · bors: welovebudapest.com
 //   szamos (Dobos torte): szamos.hu · auguszt: auguszt.hu
+// Other categories (2026-10-09). Wikimedia Commons / Wikipedia images (wikimedia.org) are CC-licensed and need author credit;
+// eleszto and fekete-kutya come from the BudapestFlow blog; public-boat: Commons "Budapest, BKV hajó.jpg"; fine-arts: Commons "Szépművészeti Múzeum, Budapest,Hősök tere.jpg":
+//   central-cafe: centralgrandcafe.hu · parisi-passage: parisipassage.hu · muvesz: upload.wikimedia.org · massolit: welovebudapest.com
+//   espresso-embassy: budapestbylocals.b-cdn.net · my-little-melbourne: thecoffeevine.com · fekete: feketekv.hu · paloma: palomaartspace.com
+//   koller: thumb.wikimedia.org · pinball: flippermuzeum.hu · childrens-railway: thumb.wikimedia.org · memento-park: thumb.wikimedia.org
+//   nyolcesfel: nyolcesfel.hu · szechenyi: budapestgyogyfurdoi.synergyfox.app · rudas: budapestgyogyfurdoi.synergyfox.app · lukacs: budapestgyogyfurdoi.synergyfox.app
+//   veli-bej: thumb.wikimedia.org · river-cruise: thumb.wikimedia.org · public-boat: commons.wikimedia.org · szimpla: thumb.wikimedia.org
+//   csendes: justbudapest.com · tasting-table: tastehungary.com · doblo: doblo.hu · kadarka: wineandspiritsmagazine.com
+//   eleszto: budapestflow.b-cdn.net · fekete-kutya: budapestflow.b-cdn.net · 360-bar: 360bar.hu · fine-arts: commons.wikimedia.org
+//   mucsarnok: thumb.wikimedia.org · ludwig: thumb.wikimedia.org · hospital-rock: thumb.wikimedia.org · house-of-music: thumb.wikimedia.org
+//   inda: cdn.prod.website-files.com · deak-erika: deakerikagaleria.hu · mai-mano: thumb.wikimedia.org
+// Vegetarian (2026-10-09): napfenyes: napfenyesetterem.hu · tahina-bite: tahinabite.com
 // Home tile images/cat-coffee-central.webp (480x360): Central Grand Café façade and terrace, centralgrandcafe.hu/en/galeriak/building-and-terrace/, 2026-10-09.
-const GROUP_IMG = { "Hungarian kitchen": "images/cat-food.webp", "Street food": "images/cat-quick.webp", "Cakes & sweets": "images/cat-sweets.webp" };
+const GROUP_IMG = { "Hungarian kitchen": "images/cat-food.webp", "Street food": "images/cat-quick.webp", "Cakes & sweets": "images/cat-sweets.webp", "Vegetarian": "images/cat-food.webp" };
 
 // Header (BudapestFlow logo + share buttons). Temporarily off: set to true to bring it back everywhere.
 const SHOW_HEADER = false;
@@ -54,7 +66,7 @@ const TOURS = {
 
 // img: path to a photo (e.g. "images/cat-baths.webp") to replace the tinted placeholder
 const CATEGORIES = [
-  { id: "food", c1: "#B5654A", c2: "#7A3B2A", img: "images/cat-food.webp", label: "Food", home: true, intro: "Proper Hungarian meals, street food for a quick bite, and cakes for after." },
+  { id: "food", c1: "#B5654A", c2: "#7A3B2A", img: "images/cat-food.webp", label: "Food", home: true, intro: "Proper Hungarian meals, street food for a quick bite, cakes for after, and good vegetarian places." },
   { id: "coffee", c1: "#8C6A52", c2: "#4E3829", img: "images/cat-coffee-central.webp", label: "Coffee", home: true, intro: "Grand old cafés for the atmosphere, specialty spots for the coffee." },
   { id: "baths", c1: "#5F9A96", c2: "#2F6263", img: "images/cat-baths.webp", label: "Thermal baths", home: true, intro: "Each bath has its own character. Pick the one that fits your mood." },
   { id: "danube", c1: "#5B7FA6", c2: "#2C4A6E", img: "images/cat-danube.webp", label: "Danube Cruise", home: true, intro: "See the city from the river, the classic way or the local way." },
@@ -83,49 +95,51 @@ const PLACES = [
   { cat: "food", group: "Street food", name: "Bors GasztroBár", img: "images/places/bors.webp", why: "Creative soups and baguettes in a tiny place. One of my favourites for a quick lunch.", price: 1, near: "Jewish Quarter", good: ["Quick bite", "Budget"], tip: "Expect a queue, it moves fast.", order: "Soup of the day", fav: true, tours: ["street-art", "mini-statues"] },
   { cat: "food", group: "Cakes & sweets", name: "Szamos", img: "images/places/szamos.webp", why: "I always stop here for marzipan and a classic cake, and it makes a lovely gift.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth", "Gifts"], fav: true },
   { cat: "food", group: "Cakes & sweets", name: "Auguszt", img: "images/places/auguszt.webp", why: "A family patisserie since the 19th century. Go for the old-fashioned cakes.", price: 2, near: "Several shops in the centre", good: ["Sweet tooth"] },
+  { cat: "food", group: "Vegetarian", name: "Napfényes", img: "images/places/napfenyes.webp", why: "One of the city's longest-running vegan kitchens, with plant-based versions of Hungarian classics. A safe bet for vegetarian guests.", price: 2, near: "Ferenciek tere, near Elizabeth Bridge", good: ["Lunch", "Dinner", "Veggie"], tip: "Open every day. Leave room for a vegan cake.", order: "Vegan goulash or stuffed cabbage", web: "https://napfenyesetterem.hu/" },
+  { cat: "food", group: "Vegetarian", name: "Tahina Bite", img: "images/places/tahina-bite.webp", why: "Vegan Middle Eastern food: crisp falafel, hummus and baba ghanoush. Quick and cheap in the Jewish Quarter.", price: 1, near: "Wesselényi utca, Jewish Quarter", good: ["Quick bite", "Budget", "Veggie"], tip: "Open every day, 11 am to 10 pm.", order: "Falafel plate with hummus", web: "https://tahinabite.com/" },
 
 
-  { cat: "coffee", group: "Historic grand cafés", name: "Central Café", why: "A classic literary café, calmer than the New York. I'd come for a slow breakfast.", price: 3, near: "Near Elizabeth Bridge", good: ["Breakfast", "Cake break"], order: "Cake and coffee", web: "https://centralgrandcafe.hu/en/home/", placeId: "ChIJPWTeZUTcQUcRMXCSK_9QR0E" },
-  { cat: "coffee", group: "Historic grand cafés", name: "Párisi Passage", why: "Coffee and cake under the stained-glass dome of the Párisi Udvar. A beautiful place to rest your feet.", price: 3, near: "Ferenciek tere, near Elizabeth Bridge", good: ["Cake break", "Sightseeing"], tip: "Café by day, restaurant in the evening. Book for dinner.", order: "Coffee and a French-style dessert", web: "https://parisipassage.hu/", placeId: "ChIJwxcVFcTdQUcRbgQjKuCiuiI" },
-  { cat: "coffee", group: "Historic grand cafés", name: "Művész", why: "An old café opposite the Opera. I'd stop here before or after a show.", price: 2, near: "Opposite the Opera House", good: ["Cake break"] },
-  { cat: "coffee", group: "Specialty coffee", name: "Massolit Books & Café", why: "English-language bookshop and café with a hidden back garden. My favourite quiet corner.", price: 2, near: "Nagy Diófa utca, Jewish Quarter", good: ["Coffee lovers", "Quiet"], tip: "Take a table in the garden in summer. Busy with students at peak hours.", order: "Homemade cake and a coffee", fav: true, placeId: "ChIJb-V2Q2jcQUcRLRX9PFUgj7w" },
-  { cat: "coffee", group: "Specialty coffee", name: "Espresso Embassy", why: "Serious coffee near the Basilica, for when I want a proper espresso.", price: 2, near: "Near St. Stephen's Basilica", good: ["Coffee lovers"], tours: ["mini-statues"], web: "https://espressoembassy.hu/", placeId: "ChIJGyzE_xTcQUcRlvjbtChDLtU" },
-  { cat: "coffee", group: "Specialty coffee", name: "My Little Melbourne", why: "A small specialty bar in the Jewish Quarter, good for a quick coffee.", price: 2, near: "Jewish Quarter", good: ["Coffee lovers"], tours: ["street-art"] },
-  { cat: "coffee", group: "Specialty coffee", name: "Fekete", why: "A hidden courtyard café and one of the city's specialty pioneers. Half the fun is finding it.", price: 2, near: "Near the National Museum", good: ["Breakfast", "Coffee lovers"], tip: "Enter through the courtyard. Brunch is served until early afternoon.", web: "https://feketekv.hu/", placeId: "ChIJ-UU5E0PcQUcRP0iqvvmBTO8" },
-  { cat: "offbeat", name: "Paloma Artspace", why: "Local designers' workshops around a hidden colonnaded courtyard. My first stop for a gift.", price: 0, near: "Kossuth Lajos utca, near Astoria", good: ["Shopping", "Souvenirs"], tip: "The best place for handmade gifts. Peek into the Unger House courtyard nearby too.", web: "https://www.palomaartspace.com/", placeId: "ChIJe9fZIvfdQUcREuq3JWU730E" },
-  { cat: "offbeat", name: "Koller Gallery", why: "A secret gallery in the Castle District with a garden over the Danube. Most visitors walk right past it.", price: 0, near: "Táncsics Mihály utca, Castle District", good: ["Art", "Quiet"], tip: "Free to look around. All the pieces are for sale.", web: "https://www.kollergaleria.hu/", placeId: "ChIJBzFbyhjcQUcRhPRIyE8cQt8" },
-  { cat: "offbeat", name: "Pinball Museum", why: "Europe's biggest pinball collection, and you can play almost all of it. Great on a rainy evening.", price: 2, near: "Radnóti Miklós utca, District XIII", good: ["Rainy day", "Evening"], tip: "One ticket, unlimited games. Open from the afternoon, closed Mon–Tue.", web: "https://flippermuzeum.hu/en/", placeId: "ChIJRRMeY47cQUcRjgnfTfZA7s4" },
-  { cat: "offbeat", name: "Children's Railway", why: "A forest railway in the Buda Hills, run by kids aged 10 to 14. A real change of pace.", price: 1, near: "Buda Hills, Széchenyi-hegy", good: ["Families", "Nature"], tip: "Bring cash for tickets. Closed on Mondays.", web: "https://gyermekvasut.hu/en/", placeId: "ChIJ11SpDg_fQUcR8H-Af2VJzic" },
-  { cat: "offbeat", name: "Memento Park", why: "Where Budapest's old communist statues ended up, all in one open-air park.", price: 2, near: "Outskirts of Buda, District XXII", good: ["History"], tip: "It's a trip out of the centre. Their short guided tour makes all the difference.", web: "https://www.mementopark.hu/", placeId: "ChIJu0bfv2znQUcRzGPO9XqR-bc" },
-  { cat: "offbeat", name: "Nyolcésfél", why: "Artists' studios and a ruin bar in an old telephone exchange, where locals hang out.", price: 1, near: "Német utca, District VIII", good: ["Evening", "Art"], tip: "A local artists' hangout with a cheap, laid-back bar.", web: "https://nyolcesfel.hu/", placeId: "ChIJqYGX84HdQUcRkCVzggfelto" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Central Café", img: "images/places/central-cafe.webp", why: "A classic literary café, calmer than the New York. I'd come for a slow breakfast.", price: 3, near: "Near Elizabeth Bridge", good: ["Breakfast", "Cake break"], order: "Cake and coffee", web: "https://centralgrandcafe.hu/en/home/", placeId: "ChIJPWTeZUTcQUcRMXCSK_9QR0E" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Párisi Passage", img: "images/places/parisi-passage.webp", why: "Coffee and cake under the stained-glass dome of the Párisi Udvar. A beautiful place to rest your feet.", price: 3, near: "Ferenciek tere, near Elizabeth Bridge", good: ["Cake break", "Sightseeing"], tip: "Café by day, restaurant in the evening. Book for dinner.", order: "Coffee and a French-style dessert", web: "https://parisipassage.hu/", placeId: "ChIJwxcVFcTdQUcRbgQjKuCiuiI" },
+  { cat: "coffee", group: "Historic grand cafés", name: "Művész", img: "images/places/muvesz.webp", why: "An old café opposite the Opera. I'd stop here before or after a show.", price: 2, near: "Opposite the Opera House", good: ["Cake break"] },
+  { cat: "coffee", group: "Specialty coffee", name: "Massolit Books & Café", img: "images/places/massolit.webp", why: "English-language bookshop and café with a hidden back garden. My favourite quiet corner.", price: 2, near: "Nagy Diófa utca, Jewish Quarter", good: ["Coffee lovers", "Quiet"], tip: "Take a table in the garden in summer. Busy with students at peak hours.", order: "Homemade cake and a coffee", fav: true, placeId: "ChIJb-V2Q2jcQUcRLRX9PFUgj7w" },
+  { cat: "coffee", group: "Specialty coffee", name: "Espresso Embassy", img: "images/places/espresso-embassy.webp", why: "Serious coffee near the Basilica, for when I want a proper espresso.", price: 2, near: "Near St. Stephen's Basilica", good: ["Coffee lovers"], tours: ["mini-statues"], web: "https://espressoembassy.hu/", placeId: "ChIJGyzE_xTcQUcRlvjbtChDLtU" },
+  { cat: "coffee", group: "Specialty coffee", name: "My Little Melbourne", img: "images/places/my-little-melbourne.webp", why: "A small specialty bar in the Jewish Quarter, good for a quick coffee.", price: 2, near: "Jewish Quarter", good: ["Coffee lovers"], tours: ["street-art"] },
+  { cat: "coffee", group: "Specialty coffee", name: "Fekete", img: "images/places/fekete.webp", why: "A hidden courtyard café and one of the city's specialty pioneers. Half the fun is finding it.", price: 2, near: "Near the National Museum", good: ["Breakfast", "Coffee lovers"], tip: "Enter through the courtyard. Brunch is served until early afternoon.", web: "https://feketekv.hu/", placeId: "ChIJ-UU5E0PcQUcRP0iqvvmBTO8" },
+  { cat: "offbeat", name: "Paloma Artspace", img: "images/places/paloma.webp", why: "Local designers' workshops around a hidden colonnaded courtyard. My first stop for a gift.", price: 0, near: "Kossuth Lajos utca, near Astoria", good: ["Shopping", "Souvenirs"], tip: "The best place for handmade gifts. Peek into the Unger House courtyard nearby too.", web: "https://www.palomaartspace.com/", placeId: "ChIJe9fZIvfdQUcREuq3JWU730E" },
+  { cat: "offbeat", name: "Koller Gallery", img: "images/places/koller.webp", why: "A secret gallery in the Castle District with a garden over the Danube. Most visitors walk right past it.", price: 0, near: "Táncsics Mihály utca, Castle District", good: ["Art", "Quiet"], tip: "Free to look around. All the pieces are for sale.", web: "https://www.kollergaleria.hu/", placeId: "ChIJBzFbyhjcQUcRhPRIyE8cQt8" },
+  { cat: "offbeat", name: "Pinball Museum", img: "images/places/pinball.webp", why: "Europe's biggest pinball collection, and you can play almost all of it. Great on a rainy evening.", price: 2, near: "Radnóti Miklós utca, District XIII", good: ["Rainy day", "Evening"], tip: "One ticket, unlimited games. Open from the afternoon, closed Mon–Tue.", web: "https://flippermuzeum.hu/en/", placeId: "ChIJRRMeY47cQUcRjgnfTfZA7s4" },
+  { cat: "offbeat", name: "Children's Railway", img: "images/places/childrens-railway.webp", why: "A forest railway in the Buda Hills, run by kids aged 10 to 14. A real change of pace.", price: 1, near: "Buda Hills, Széchenyi-hegy", good: ["Families", "Nature"], tip: "Bring cash for tickets. Closed on Mondays.", web: "https://gyermekvasut.hu/en/", placeId: "ChIJ11SpDg_fQUcR8H-Af2VJzic" },
+  { cat: "offbeat", name: "Memento Park", img: "images/places/memento-park.webp", why: "Where Budapest's old communist statues ended up, all in one open-air park.", price: 2, near: "Outskirts of Buda, District XXII", good: ["History"], tip: "It's a trip out of the centre. Their short guided tour makes all the difference.", web: "https://www.mementopark.hu/", placeId: "ChIJu0bfv2znQUcRzGPO9XqR-bc" },
+  { cat: "offbeat", name: "Nyolcésfél", img: "images/places/nyolcesfel.webp", why: "Artists' studios and a ruin bar in an old telephone exchange, where locals hang out.", price: 1, near: "Német utca, District VIII", good: ["Evening", "Art"], tip: "A local artists' hangout with a cheap, laid-back bar.", web: "https://nyolcesfel.hu/", placeId: "ChIJqYGX84HdQUcRkCVzggfelto" },
 
-  { cat: "baths", name: "Széchenyi", why: "The big yellow classic, and where I'd take a first-timer. Go early.", price: 3, near: "City Park", good: ["First-timers", "Groups"], best: "Early morning", tip: "Bring flip-flops and a towel.", fav: true },
-  { cat: "baths", name: "Rudas", why: "Ottoman dome and a rooftop pool with a view. I'd go in the evening.", price: 3, near: "Foot of Gellért Hill, Buda", good: ["Views"], best: "Evening", tip: "Check men-only and women-only days." },
-  { cat: "baths", name: "Lukács", why: "Where the locals go. Less show, more actual bathing.", price: 2, near: "Buda end of Margaret Bridge", good: ["Quiet time"], best: "Weekday morning" },
-  { cat: "baths", name: "Veli Bej", why: "A small, quiet Ottoman bath, and a hidden favourite of mine.", price: 2, near: "Buda end of Margaret Bridge", tip: "Limited capacity.", good: ["Quiet time", "Couples"], best: "Weekday afternoon" },
+  { cat: "baths", name: "Széchenyi", img: "images/places/szechenyi.webp", why: "The big yellow classic, and where I'd take a first-timer. Go early.", price: 3, near: "City Park", good: ["First-timers", "Groups"], best: "Early morning", tip: "Bring flip-flops and a towel.", fav: true },
+  { cat: "baths", name: "Rudas", img: "images/places/rudas.webp", why: "Ottoman dome and a rooftop pool with a view. I'd go in the evening.", price: 3, near: "Foot of Gellért Hill, Buda", good: ["Views"], best: "Evening", tip: "Check men-only and women-only days." },
+  { cat: "baths", name: "Lukács", img: "images/places/lukacs.webp", why: "Where the locals go. Less show, more actual bathing.", price: 2, near: "Buda end of Margaret Bridge", good: ["Quiet time"], best: "Weekday morning" },
+  { cat: "baths", name: "Veli Bej", img: "images/places/veli-bej.webp", why: "A small, quiet Ottoman bath, and a hidden favourite of mine.", price: 2, near: "Buda end of Margaret Bridge", tip: "Limited capacity.", good: ["Quiet time", "Couples"], best: "Weekday afternoon" },
 
-  { cat: "danube", name: "Evening river cruise", why: "The Parliament lit up from the water. I'd do this once, at sunset.", price: 3, near: "Pest riverbank", good: ["Couples", "Photos"], best: "Sunset", tip: "Sunset departures sell out.", fav: true },
-  { cat: "danube", name: "Public boat D11 / D12", why: "My local hack: similar views for a fraction of the price.", price: 1, near: "Stops along both riverbanks", good: ["Budget", "Photos"], best: "Late afternoon", tip: "Check the timetable, it changes by season." },
+  { cat: "danube", name: "Evening river cruise", img: "images/places/river-cruise.webp", why: "The Parliament lit up from the water. I'd do this once, at sunset.", price: 3, near: "Pest riverbank", good: ["Couples", "Photos"], best: "Sunset", tip: "Sunset departures sell out.", fav: true },
+  { cat: "danube", name: "Public boat D11 / D12", img: "images/places/public-boat.webp", why: "My local hack: similar views for a fraction of the price.", price: 1, near: "Stops along both riverbanks", good: ["Budget", "Photos"], best: "Late afternoon", tip: "Check the timetable, it changes by season." },
 
-  { cat: "drinks", name: "Szimpla Kert", why: "The original ruin bar. I'd see it once, ideally before it gets busy.", price: 1, near: "Jewish Quarter", good: ["First-timers", "Groups"], best: "Evening", tip: "Sunday morning farmers' market.", tours: ["street-art"] },
-  { cat: "drinks", name: "Csendes Létterem", why: "A surreal junk-art bar in an 1883 café building. Look up and around.", price: 2, near: "Ferenczy István utca, near Astoria", good: ["Groups", "Cocktails"], best: "Evening", tip: "Look for the old Café Fiume lettering on the window. Opens late afternoon.", placeId: "ChIJtfzFXUPcQUcR3mCDIuuQb1g" },
-  { cat: "drinks", name: "Tasting Table", why: "My kind of tasting spot: cosy, in a lovely local neighbourhood. The owners are real wine enthusiasts, and their tastings are excellent.", price: 2, near: "Bródy Sándor utca, District VIII", good: ["Wine lovers", "Tastings"], tip: "Book the sommelier-led tasting ahead, or drop into their wine shop across the street for a glass or a flight.", order: "A tasting flight of Hungarian wines", fav: true, web: "https://tastehungary.com/tasting-table-budapest/", cta: "Book a tasting", placeId: "ChIJ_TYfaz3cQUcRxuWm7zf5llE" },
-  { cat: "drinks", name: "Doblo", why: "A cosy wine bar in the Jewish Quarter, perfect after a walk through the district.", price: 2, near: "Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening" },
-  { cat: "drinks", name: "Kadarka Wine Bar", why: "Around a hundred Hungarian wines open by the glass. Where I'd go to find out what kadarka is.", price: 2, near: "Király utca, Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening", tip: "Book after 7 pm. Ask for small tasting pours before you pick a glass.", order: "A glass of Szekszárd kadarka", placeId: "ChIJkaD3aGncQUcRoEcntPpnrW8" },
-  { cat: "drinks", name: "Élesztő", why: "Craft beer in a former glassworks. My pick for a beer-lover's evening.", price: 1, near: "Near Corvin Quarter", good: ["Beer lovers", "Groups"], best: "Evening" },
-  { cat: "drinks", name: "Fekete Kutya", why: "Tiny, shabby, honest: a local bar with good-value beer.", price: 1, near: "Dob utca, Jewish Quarter", good: ["Beer lovers", "Late night"], best: "Late evening", tip: "Opens at 5 pm, closed on Sundays. Gets packed when there's a DJ.", placeId: "ChIJJ0WFtGncQUcRI3vuFybLNmA" },
-  { cat: "drinks", name: "360 Bar", why: "A rooftop on Andrássy út. Go at sunset, if the weather plays along.", price: 3, near: "On Andrássy Avenue", good: ["Couples"], best: "Sunset", tip: "Weather dependent." },
+  { cat: "drinks", name: "Szimpla Kert", img: "images/places/szimpla.webp", why: "The original ruin bar. I'd see it once, ideally before it gets busy.", price: 1, near: "Jewish Quarter", good: ["First-timers", "Groups"], best: "Evening", tip: "Sunday morning farmers' market.", tours: ["street-art"] },
+  { cat: "drinks", name: "Csendes Létterem", img: "images/places/csendes.webp", why: "A surreal junk-art bar in an 1883 café building. Look up and around.", price: 2, near: "Ferenczy István utca, near Astoria", good: ["Groups", "Cocktails"], best: "Evening", tip: "Look for the old Café Fiume lettering on the window. Opens late afternoon.", placeId: "ChIJtfzFXUPcQUcR3mCDIuuQb1g" },
+  { cat: "drinks", name: "Tasting Table", img: "images/places/tasting-table.webp", why: "My kind of tasting spot: cosy, in a lovely local neighbourhood. The owners are real wine enthusiasts, and their tastings are excellent.", price: 2, near: "Bródy Sándor utca, District VIII", good: ["Wine lovers", "Tastings"], tip: "Book the sommelier-led tasting ahead, or drop into their wine shop across the street for a glass or a flight.", order: "A tasting flight of Hungarian wines", fav: true, web: "https://tastehungary.com/tasting-table-budapest/", cta: "Book a tasting", placeId: "ChIJ_TYfaz3cQUcRxuWm7zf5llE" },
+  { cat: "drinks", name: "Doblo", img: "images/places/doblo.webp", why: "A cosy wine bar in the Jewish Quarter, perfect after a walk through the district.", price: 2, near: "Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening" },
+  { cat: "drinks", name: "Kadarka Wine Bar", img: "images/places/kadarka.webp", why: "Around a hundred Hungarian wines open by the glass. Where I'd go to find out what kadarka is.", price: 2, near: "Király utca, Jewish Quarter", good: ["Wine lovers", "Couples"], best: "Evening", tip: "Book after 7 pm. Ask for small tasting pours before you pick a glass.", order: "A glass of Szekszárd kadarka", placeId: "ChIJkaD3aGncQUcRoEcntPpnrW8" },
+  { cat: "drinks", name: "Élesztő", img: "images/places/eleszto.webp", why: "Craft beer in a former glassworks. My pick for a beer-lover's evening.", price: 1, near: "Near Corvin Quarter", good: ["Beer lovers", "Groups"], best: "Evening" },
+  { cat: "drinks", name: "Fekete Kutya", img: "images/places/fekete-kutya.webp", why: "Tiny, shabby, honest: a local bar with good-value beer.", price: 1, near: "Dob utca, Jewish Quarter", good: ["Beer lovers", "Late night"], best: "Late evening", tip: "Opens at 5 pm, closed on Sundays. Gets packed when there's a DJ.", placeId: "ChIJJ0WFtGncQUcRI3vuFybLNmA" },
+  { cat: "drinks", name: "360 Bar", img: "images/places/360-bar.webp", why: "A rooftop on Andrássy út. Go at sunset, if the weather plays along.", price: 3, near: "On Andrássy Avenue", good: ["Couples"], best: "Sunset", tip: "Weather dependent." },
 
 
 
-  { cat: "rainy", group: "Museums & sights", name: "Museum of Fine Arts", why: "Europe's old masters, plus Egyptian and classical art. I'd give it a full morning.", price: 2, near: "Heroes' Square", good: ["Art", "Rainy day"], tip: "Closed Mondays. Combine it with the Műcsarnok across the square.", web: "https://www.szepmuveszeti.hu/en/", placeId: "ChIJ-6FvO4jbQUcROeO39pe3Sxs" },
-  { cat: "rainy", group: "Museums & sights", name: "Műcsarnok", why: "Big contemporary shows in a grand hall on Heroes' Square. I check what's on before I go.", price: 2, near: "Heroes' Square", good: ["Art"], tip: "Each exhibition has its own ticket. Closed Mondays.", web: "https://mucsarnok.hu/", placeId: "ChIJd4t1FHjcQUcR6I49YlZiUg4" },
-  { cat: "rainy", group: "Museums & sights", name: "Ludwig Museum", why: "Modern and contemporary art, from Picasso to Central European artists. Open late, which helps.", price: 2, near: "Müpa, on the Danube bank in District IX", good: ["Art", "Rainy day"], tip: "Open until 8 pm, closed Mondays.", web: "https://www.ludwigmuseum.hu/en", placeId: "ChIJ5_bsZQTdQUcRd39JyGJUeRE" },
-  { cat: "rainy", group: "Museums & sights", name: "Hospital in the Rock", why: "A wartime hospital inside Castle Hill. It stays with you.", price: 2, near: "Castle District", tip: "Guided visits only.", good: ["History"] },
-  { cat: "rainy", group: "Museums & sights", name: "House of Music Hungary", why: "An interactive music museum in City Park. Great with kids, and fun without them.", price: 2, near: "City Park", good: ["Families"], fav: true },
-  { cat: "rainy", group: "Small galleries", name: "Inda Gallery", why: "Contemporary Hungarian and international art, chosen by in-house art historians. I drop in whenever I'm nearby.", price: 0, near: "Király utca, District VI", good: ["Art", "Free"], tip: "Free to visit. Open Tuesday to Friday afternoons.", web: "https://www.indagaleria.hu/", placeId: "ChIJ69lVf2ncQUcRR6CQ6P8GXCI" },
-  { cat: "rainy", group: "Small galleries", name: "Deák Erika Gallery", why: "One of the city's longest-running galleries, open since 1998. A quiet way to see what Hungarian artists are up to.", price: 0, near: "Mozsár utca, near the Opera", good: ["Art", "Free"], tip: "Free to visit. Open Wednesday to Friday, midday to 6 pm.", web: "https://deakerikagaleria.hu/", placeId: "ChIJE-dtQ2zcQUcRNx8-dc5Mgr8" },
-  { cat: "rainy", group: "Small galleries", name: "Hungarian House of Photography", why: "Photo exhibitions in a historic photographer's studio house. I'd go for the building as much as the pictures.", price: 1, near: "Nagymező utca, near the Opera", good: ["Art", "Photography"], tip: "Small space, about half an hour. Closed Mondays.", web: "https://maimano.hu/", placeId: "ChIJgU5vE2zcQUcRXDGgKYfaaj8" }
+  { cat: "rainy", group: "Museums & sights", name: "Museum of Fine Arts", img: "images/places/fine-arts.webp", why: "Europe's old masters, plus Egyptian and classical art. I'd give it a full morning.", price: 2, near: "Heroes' Square", good: ["Art", "Rainy day"], tip: "Closed Mondays. Combine it with the Műcsarnok across the square.", web: "https://www.szepmuveszeti.hu/en/", placeId: "ChIJ-6FvO4jbQUcROeO39pe3Sxs" },
+  { cat: "rainy", group: "Museums & sights", name: "Műcsarnok", img: "images/places/mucsarnok.webp", why: "Big contemporary shows in a grand hall on Heroes' Square. I check what's on before I go.", price: 2, near: "Heroes' Square", good: ["Art"], tip: "Each exhibition has its own ticket. Closed Mondays.", web: "https://mucsarnok.hu/", placeId: "ChIJd4t1FHjcQUcR6I49YlZiUg4" },
+  { cat: "rainy", group: "Museums & sights", name: "Ludwig Museum", img: "images/places/ludwig.webp", why: "Modern and contemporary art, from Picasso to Central European artists. Open late, which helps.", price: 2, near: "Müpa, on the Danube bank in District IX", good: ["Art", "Rainy day"], tip: "Open until 8 pm, closed Mondays.", web: "https://www.ludwigmuseum.hu/en", placeId: "ChIJ5_bsZQTdQUcRd39JyGJUeRE" },
+  { cat: "rainy", group: "Museums & sights", name: "Hospital in the Rock", img: "images/places/hospital-rock.webp", why: "A wartime hospital inside Castle Hill. It stays with you.", price: 2, near: "Castle District", tip: "Guided visits only.", good: ["History"] },
+  { cat: "rainy", group: "Museums & sights", name: "House of Music Hungary", img: "images/places/house-of-music.webp", why: "An interactive music museum in City Park. Great with kids, and fun without them.", price: 2, near: "City Park", good: ["Families"], fav: true },
+  { cat: "rainy", group: "Small galleries", name: "Inda Gallery", img: "images/places/inda.webp", why: "Contemporary Hungarian and international art, chosen by in-house art historians. I drop in whenever I'm nearby.", price: 0, near: "Király utca, District VI", good: ["Art", "Free"], tip: "Free to visit. Open Tuesday to Friday afternoons.", web: "https://www.indagaleria.hu/", placeId: "ChIJ69lVf2ncQUcRR6CQ6P8GXCI" },
+  { cat: "rainy", group: "Small galleries", name: "Deák Erika Gallery", img: "images/places/deak-erika.webp", why: "One of the city's longest-running galleries, open since 1998. A quiet way to see what Hungarian artists are up to.", price: 0, near: "Mozsár utca, near the Opera", good: ["Art", "Free"], tip: "Free to visit. Open Wednesday to Friday, midday to 6 pm.", web: "https://deakerikagaleria.hu/", placeId: "ChIJE-dtQ2zcQUcRNx8-dc5Mgr8" },
+  { cat: "rainy", group: "Small galleries", name: "Hungarian House of Photography", img: "images/places/mai-mano.webp", why: "Photo exhibitions in a historic photographer's studio house. I'd go for the building as much as the pictures.", price: 1, near: "Nagymező utca, near the Opera", good: ["Art", "Photography"], tip: "Small space, about half an hour. Closed Mondays.", web: "https://maimano.hu/", placeId: "ChIJgU5vE2zcQUcRXDGgKYfaaj8" }
 ];
 
 const TIPS = [
@@ -148,7 +162,9 @@ const TIPS = [
 const app = document.getElementById("app");
 const params = new URLSearchParams(location.search);
 const tourKey = TOURS[params.get("tour")] ? params.get("tour") : null;
-const filters = { fav: false, tag: null }; // tag: { cat, name } — set by tapping a "good for" tag on a card
+// Categories with a one-row subcategory filter; label = short name shown in the segmented control.
+const GROUP_FILTERS = { food: { "Hungarian kitchen": "Hungarian", "Street food": "Street food", "Cakes & sweets": "Sweets", "Vegetarian": "Veggie" } };
+const filters = { fav: false, tag: null, group: null }; // group: { cat, name } // tag: { cat, name } — set by tapping a "good for" tag on a card
 let tagCat = null; // category being rendered: its cards get tappable tags (plain labels everywhere else)
 
 // Saved places (heart). Stored in this browser only (localStorage); works without it, just not across visits.
@@ -209,7 +225,7 @@ function goodTag(g) {
 function card(p) { return cardHtml(p, 3); }
 function cardTop(p) { return cardHtml(p, 2); } // when the list has no group headings (h2), place names follow the page title (h1) directly
 function cardHtml(p, lvl) {
-  if (FOOD_LAYOUT === "compact" && p.cat === "food") return cardCompact(p, lvl);
+  if (CARD_LAYOUT === "compact") return cardCompact(p, lvl);
   return `<article class="card">
     <div class="head">
       <h${lvl} class="name">${esc(p.name)}${p.fav ? '<span class="pick">Attila\'s pick</span>' : ""}</h${lvl}>
@@ -258,8 +274,6 @@ function cardCompact(p, lvl) {
       </div>
       <p class="why">${esc(p.why)}</p>
     </div>
-    <details class="fold">
-      <summary>${ico("chev")}<span>${p.order || p.tip ? "What to order, tips & map" : "Map & website"}</span></summary>
       <div class="body">
         ${(p.order || p.tip) ? `<ul class="facts">
           ${p.order ? `<li>${ico("check")}<span><strong>Order:</strong> ${esc(p.order)}</span></li>` : ""}
@@ -270,7 +284,6 @@ function cardCompact(p, lvl) {
           ${linkBtn(p)}
         </div>
       </div>
-    </details>
   </article>`;
 }
 
@@ -371,6 +384,8 @@ function renderCategory(id) {
   if (!c) { goHome(); return; }
 
   const activeTag = filters.tag && filters.tag.cat === id ? filters.tag.name : null;
+  const groupOpts = GROUP_FILTERS[id];
+  const activeGroup = groupOpts && filters.group && filters.group.cat === id ? filters.group.name : null;
   let body;
   if (id === "practical") {
     body = [...new Set(TIPS.map(t => t.group))].map(g => `<h2 class="eyebrow group-title">${esc(g)}</h2>` + TIPS.filter(t => t.group === g).map(t => `<div class="tipcard${t.avoid ? " avoid" : ""}">
@@ -381,6 +396,7 @@ function renderCategory(id) {
     let list = PLACES.filter(p => p.cat === id);
     if (filters.fav && list.some(p => p.fav)) list = list.filter(p => p.fav);
     if (activeTag) list = list.filter(p => (p.good || []).includes(activeTag));
+    if (activeGroup) list = list.filter(p => p.group === activeGroup);
     tagCat = id;
     const groups = [...new Set(list.map(p => p.group || ""))];
     body = list.length
@@ -399,8 +415,11 @@ function renderCategory(id) {
       <p class="intro">${esc(c.intro)}</p>
       ${id === "practical" || !(activeTag || PLACES.some(p => p.cat === id && p.fav)) ? "" : `<div class="filters">
         ${activeTag ? `<button class="chip chip-tag" id="clear-tag" aria-label="Remove filter: ${esc(activeTag)}">${esc(activeTag)}${ico("x")}</button>` : ""}
-        ${PLACES.some(p => p.cat === id && p.fav) ? `<button class="chip chip-fav" data-f="fav" aria-pressed="${filters.fav}">${ico("star")}Show only Attila's picks</button>` : ""}
+        ${PLACES.some(p => p.cat === id && p.fav) ? `<button class="btn btn-secondary chip-fav" data-f="fav" aria-pressed="${filters.fav}">${ico("star")}Show only Attila's picks</button>` : ""}
       </div>`}
+      ${groupOpts ? `<div class="group-seg" role="group" aria-label="Filter by type">
+        ${[["", "All"], ...Object.entries(groupOpts)].map(([g, label]) => `<button class="seg-opt" data-group="${esc(g)}" aria-pressed="${(activeGroup || "") === g}">${esc(label)}</button>`).join("")}
+      </div>` : ""}
       ${body}
     </main>
     ${siteFooter()}
@@ -408,10 +427,16 @@ function renderCategory(id) {
   document.getElementById("back").addEventListener("click", () => { goHome(); });
   if (SHOW_HEADER) document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
   const clear = document.getElementById("clear");
-  if (clear) clear.addEventListener("click", () => { filters.fav = false; filters.tag = null; renderCategory(id); });
+  if (clear) clear.addEventListener("click", () => { filters.fav = false; filters.tag = null; filters.group = null; renderCategory(id); });
+  app.querySelectorAll("[data-group]").forEach(b => b.addEventListener("click", () => {
+    filters.group = b.dataset.group ? { cat: id, name: b.dataset.group } : null;
+    renderCategory(id);
+    const on = app.querySelector('[data-group][aria-pressed="true"]');
+    if (on) on.focus({ preventScroll: true });
+  }));
   const clearTag = document.getElementById("clear-tag");
   if (clearTag) clearTag.addEventListener("click", () => { filters.tag = null; renderCategory(id); });
-  app.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+  app.querySelectorAll("[data-f]").forEach(b => b.addEventListener("click", () => {
     filters[b.dataset.f] = !filters[b.dataset.f];
     renderCategory(id);
   }));

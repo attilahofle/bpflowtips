@@ -385,6 +385,8 @@ a, button, [role="button"], label { -webkit-tap-highlight-color: transparent; }
 /* ---------- compact food card (FOOD_LAYOUT = "compact" in app.js) ---------- */
 .card-c .head { padding: 14px 14px 12px; grid-template-columns: 112px minmax(0, 1fr); gap: 12px 14px; }
 .card-c .thumb { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; background: var(--surface-card); }
+.card-c .thumb.fade { opacity: 0; transition: opacity .15s ease; }
+.card-c .thumb.fade.in { opacity: 1; }
 .card-c .info { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 4px; align-content: start; }
 .card-c .name { font-size: 19px; line-height: 1.2; overflow-wrap: anywhere; }
 .card-c .save { grid-column: 2; grid-row: 1; margin: -9px -8px -9px 0; }

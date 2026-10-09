@@ -254,11 +254,42 @@ function cardHtml(p, lvl) {
 }
 
 // Yelp-style card: photo + name, price, tags and area on top; the "why" below; order, tip and buttons fold out.
+// Cards rendered so far on the current page: the first EAGER_CARDS photos skip lazy loading, the very first gets high priority.
+let cardSeq = 0;
+const EAGER_CARDS = 3;
+const placeImg = p => p.img || GROUP_IMG[p.group] || (catById(p.cat) || {}).img;
+// First photos of a category in the order the list shows them (grouped by first appearance).
+function catFirstImgs(id, n = EAGER_CARDS) {
+  const list = PLACES.filter(p => p.cat === id);
+  const groups = [...new Set(list.map(p => p.group || ""))];
+  return groups.flatMap(g => list.filter(p => (p.group || "") === g)).slice(0, n).map(placeImg).filter(Boolean);
+}
+const preloaded = new Set();
+function preloadCat(id) {
+  for (const src of catFirstImgs(id)) {
+    if (preloaded.has(src)) continue;
+    preloaded.add(src);
+    const im = new Image();
+    im.decoding = "async";
+    im.src = src;
+  }
+}
+// Photos already in the browser show at once; the rest fade in when they arrive (see .thumb.fade in styles.css).
+function prepThumbs() {
+  app.querySelectorAll("img.thumb").forEach(im => {
+    if (im.complete) return;
+    im.classList.add("fade");
+    const done = () => im.classList.add("in");
+    im.addEventListener("load", done, { once: true });
+    im.addEventListener("error", done, { once: true });
+  });
+}
 function cardCompact(p, lvl) {
-  const img = p.img || GROUP_IMG[p.group] || (catById(p.cat) || {}).img;
+  const img = placeImg(p), n = cardSeq++;
+  const loadAttrs = n < EAGER_CARDS ? (n === 0 ? ' fetchpriority="high"' : "") : ' loading="lazy"';
   return `<article class="card card-c">
     <div class="head">
-      ${img ? `<img class="thumb" src="${esc(img)}" alt="" width="112" height="112" loading="lazy" decoding="async">` : ""}
+      ${img ? `<img class="thumb" src="${esc(img)}" alt="" width="112" height="112"${loadAttrs} decoding="async">` : ""}
       <div class="info">
         <h${lvl} class="name">${esc(p.name)}</h${lvl}>
         <button class="save" data-save="${esc(placeKey(p))}" aria-pressed="${saved.has(placeKey(p))}" aria-label="Save ${esc(p.name)}">${ico("heart")}</button>
@@ -301,6 +332,7 @@ function siteFooter() {
 }
 
 function renderHome() {
+  cardSeq = 0;
   const homeCats = CATEGORIES.filter(c => c.home);
   const nearTour = tourKey ? PLACES.filter(p => (p.tours || []).includes(tourKey)) : [];
 
@@ -380,6 +412,7 @@ function goHome() {
 }
 
 function renderCategory(id) {
+  cardSeq = 0;
   const c = catById(id);
   if (!c) { goHome(); return; }
 
@@ -426,6 +459,7 @@ function renderCategory(id) {
   `;
   document.getElementById("back").addEventListener("click", () => { goHome(); });
   if (SHOW_HEADER) document.getElementById("share-cat").addEventListener("click", () => sharePage(c));
+  prepThumbs();
   const clear = document.getElementById("clear");
   if (clear) clear.addEventListener("click", () => { filters.fav = false; filters.tag = null; filters.group = null; renderCategory(id); });
   app.querySelectorAll("[data-group]").forEach(b => b.addEventListener("click", () => {
@@ -564,6 +598,7 @@ function listPage(title, inner) {
 }
 
 function renderSaved() {
+  cardSeq = 0;
   const list = PLACES.filter(p => saved.has(placeKey(p)));
   if (!list.length) {
     listPage("Saved", `<div class="saved-empty">${ico("heart")}<h2>Nothing saved yet</h2><p>Tap the heart on any place to keep it here for later.</p><a class="btn btn-secondary" href="#" onclick="goHome();return false">Browse the categories</a></div>`);
@@ -578,6 +613,7 @@ function renderSaved() {
 
 // Opened from a friend's link: show their places, and let the visitor add them to their own list.
 function renderShared(ids) {
+  cardSeq = 0;
   const list = PLACES.filter(p => ids.includes(hashKey(placeKey(p))));
   if (!list.length) {
     listPage("Shared list", `<div class="saved-empty">${ico("heart")}<h2>This list is empty</h2><p>The link doesn't match any places. It may be out of date.</p><a class="btn btn-secondary" href="#" onclick="goHome();return false">Browse the categories</a></div>`);
@@ -621,6 +657,7 @@ function route() {
   const isSaved = location.hash === "#saved";
   const shared = location.hash.match(/^#saved=([\w,]*)$/);
   if (m) renderCategory(m[1]); else if (isSaved) renderSaved(); else if (shared) renderShared(shared[1].split(",").filter(Boolean)); else renderHome();
+  if (!m) prepThumbs(); // renderCategory runs it itself
   currentTab = m ? m[1] : isSaved ? "saved" : shared ? "shared" : "";
   if (sheetOpen) setSheet(false, false);
   renderTabbar(currentTab);
@@ -660,6 +697,18 @@ app.addEventListener("change", e => {
   const go = document.getElementById("tip-go");
   if (go) go.outerHTML = tipGo(TIP_LINKS[+e.target.value]);
 });
+// Start loading a category's first photos as soon as a finger or pointer lands on its tile, tab or sheet row.
+document.addEventListener("pointerdown", e => {
+  const el = e.target.closest("[data-cat], a[href^='#cat/']");
+  if (el) preloadCat(el.dataset.cat || el.getAttribute("href").slice(5));
+}, { passive: true });
+document.addEventListener("pointerover", e => {
+  if (e.pointerType !== "mouse") return;
+  const el = e.target.closest("[data-cat], a[href^='#cat/']");
+  if (el) preloadCat(el.dataset.cat || el.getAttribute("href").slice(5));
+}, { passive: true });
+// The categories in the tab bar are one tap away from anywhere, so fetch their first photos once the page is idle.
+(window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => TABS.forEach(t => { if (catById(t.id)) preloadCat(t.id); }));
 window.addEventListener("hashchange", route);
 document.addEventListener("touchstart", () => {}, { passive: true }); // lets iOS Safari show the :active pressed states
 route();
